@@ -26,8 +26,6 @@ typedef enum{
   	STRING_TYPE,
 	ID_TYPE,
 	MATRIX_TYPE,
-  	BOOL_TYPE
-	  
 }type;															
 
 typedef struct data{
@@ -39,7 +37,6 @@ typedef struct data{
     } ident;
     long enter;
     float real;
-	bool boolean;
     void *sense_valor;
 	float *float_matrix;
 	long *integer_matrix;

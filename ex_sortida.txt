@@ -1,3 +1,0 @@
-ID: a value: 1
-ID: b value: 2
-BOOL value: False

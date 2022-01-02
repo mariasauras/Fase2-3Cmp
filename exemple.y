@@ -29,10 +29,9 @@ extern int yylex();
 %token <st.value_data.sense_valor> ASSIGN ENDLINE
 %token <st.value_data.enter> INTEGER
 %token <st.value_data.ident> ID
-%token <st.value_data.ident> ID_BOOL
 %token <st.value_data.real> FLOAT
 %token <st.value_data.ident> STRING
-%token <st.value_data.boolean> BOOLEAN
+
 /* Arithmetical operators */
 %token  SUMA RESTA MUL DIV MOD POW 
 /* Symbols */
@@ -56,24 +55,7 @@ programa : programa expressio
          | expressio 
 
 expressio : expressio_aritmetica 
-          | expressio_bool
 
-expressio_bool : ID ASSIGN orlist ENDLINE{
-                  $$.value_type = $3.value_type;
-                  sym_enter($1.lexema, &$3);
-                  $$ = $3;
-
-                  if($3.value_data.boolean == true){
-                    fprintf(yyout, "ID: %s value: True\n",$1.lexema); 
-                  } else fprintf(yyout, "ID: %s value: False\n",$1.lexema);
-                }
-                | orlist ENDLINE {
-                  $$.value_type = $1.value_type;
-
-                  if($1.value_data.boolean == true){
-                    fprintf(yyout, "BOOL value: True\n"); 
-                  } else fprintf(yyout, "BOOL value: False\n");
-                }
 
 expressio_aritmetica : ID ASSIGN sumrest ENDLINE  {
                           $$.value_type = $3.value_type;
@@ -84,12 +66,6 @@ expressio_aritmetica : ID ASSIGN sumrest ENDLINE  {
                             fprintf(yyout, "ID: %s value: %ld\n",$1.lexema, $3.value_data.enter);
                           } else if($$.value_type == FLOAT_TYPE){
                             fprintf(yyout, "ID: %s value: %.2f\n",$1.lexema, $3.value_data.real);
-                          } else if($$.value_type == BOOL_TYPE){
-                            if($$.value_data.boolean == 1){
-                              fprintf(yyout, "ID: %s value: True\n",$1.lexema); 
-                            } else {
-                              fprintf(yyout, "ID: %s value: False\n",$1.lexema);
-                            }
                           }else if($$.value_type == STRING_TYPE){
                             fprintf(yyout, "ID: %s value: %s\n",$1.lexema, $3.value_data.ident.lexema);
                           }else if ($$.value_type == MATRIX_TYPE){
@@ -126,13 +102,6 @@ expressio_aritmetica : ID ASSIGN sumrest ENDLINE  {
                           } else if($$.value_type == FLOAT_TYPE){
                             fprintf(yyout, "FLOAT value: %f\n", $1.value_data.real);
                             $$.value_data.real = $1.value_data.real;
-                          } else if($$.value_type == BOOL_TYPE){
-                            $$.value_data.boolean = $1.value_data.boolean;
-                            if($$.value_data.boolean == 1){
-                              fprintf(yyout, "BOOL value: True\n"); 
-                            } else {
-                              fprintf(yyout, "BOOL value: False\n");
-                            }
                           }else{
                             fprintf(yyout, "STRING value: %s\n", $1.value_data.ident.lexema);
                             $$.value_data.ident.lexema = $1.value_data.ident.lexema;
@@ -141,23 +110,6 @@ expressio_aritmetica : ID ASSIGN sumrest ENDLINE  {
 
 
 /* Priority Hierarchy */
-
-bool_value : ID_BOOL      { if(sym_lookup($1.lexema, &$$) == SYMTAB_NOT_FOUND) yyerror("Var doesn't exit"); }
-           | BOOLEAN      { $$.value_type = BOOL_TYPE; $$.value_data.boolean = $1; }
-           | OP orlist CP { $$ = $2; }
-           | sumrest GREATERTHAN sumrest  { gt_op(&$$, $1, $3); }
-           | sumrest GREATEREQ   sumrest  { ge_op(&$$, $1, $3); } 
-           | sumrest LESSTHAN    sumrest  { lt_op(&$$, $1, $3); }
-           | sumrest LESSEQ      sumrest  { le_op(&$$, $1, $3); }
-           | sumrest EQ          sumrest  { eq_op(&$$, $1, $3); }
-           | sumrest DIF         sumrest  { dif_op(&$$, $1, $3);}
-
-orlist : orlist OR andlist { or_op(&$$, $1, $3); }
-       | andlist
-
-andlist : andlist AND bool_value { and_op(&$$, $1, $3); }
-        | NOT bool_value         { not_op(&$$, $2); }
-        | bool_value
 
 matrix_value : FLOAT    { $$.value_type = FLOAT_TYPE; $$.value_data.real = $1;  }
              | INTEGER  { $$.value_type = INT_TYPE; $$.value_data.enter = $1; }

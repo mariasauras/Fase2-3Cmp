@@ -14,8 +14,6 @@ char *type_to_str(sym_value_type st)
     return strdup("Float");
   } else if(st.value_type == STRING_TYPE){
     return strdup("Cadena");
-  }else if(st.value_type == BOOL_TYPE){
-    return strdup("Boolean");
   }else if(st.value_type == MATRIX_TYPE){
     return strdup("Vector/Matrix");
   }else if(st.value_type == ID_TYPE){
@@ -38,13 +36,7 @@ char *value_info_to_str(sym_value_type st)
     sprintf(buffer, "Float: %f", st.value_data.real);
   } else if(st.value_type == STRING_TYPE){
     sprintf(buffer, "Cadena: %s", st.value_data.ident.lexema); 
-  } else if(st.value_type == BOOL_TYPE){
-    if(st.value_data.boolean == 0){
-      sprintf(buffer, "Boolean: FALSE");
-
-    }else sprintf(buffer, "Boolean: TRUE");
-
-  } else if(st.value_type == ID_TYPE){
+  }  else if(st.value_type == ID_TYPE){
     sprintf(buffer, "ID: %s", st.value_data.ident.lexema);
   } else if (st.value_type == MATRIX_TYPE){
     if(st.value_data.matrix_type == INT_TYPE) sprintf(buffer, "KK");
