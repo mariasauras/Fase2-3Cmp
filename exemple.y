@@ -26,6 +26,7 @@ extern int yylex();
   sym_value_type st;
 }
 
+/* Identifiers, variables and types */
 %token <st.value_data.sense_valor> ASSIGN ENDLINE
 %token <st.value_data.enter> INTEGER
 %token <st.value_data.ident> ID
@@ -34,27 +35,25 @@ extern int yylex();
 
 /* Arithmetical operators */
 %token  SUMA RESTA MUL DIV MOD POW 
+
 /* Symbols */
-%token OP CP OC CC PC SPACE COMMA
-/* Relationals Operators */
-%token GREATERTHAN LESSTHAN GREATEREQ LESSEQ EQ DIF FP_D
-/* Booleans operators*/
-%token NOT AND OR
+%token OP CP OC CC PC SPACE COMMA FP_D
+
+/* Funcions and Procedures*/
+%token END DDP RETURN FUNC
 
 %type <st> programa
-%type <st> expressio expressio_aritmetica expressio_bool
+%type <st> expressio_aritmetica
 %type <st> valor
 %type <st> sumrest mullist powlist
-%type <st> matrix row  matrix_value andlist orlist bool_value
+%type <st> matrix row  matrix_value 
 
 %start programa
 
 %%
 
-programa : programa expressio 
-         | expressio 
-
-expressio : expressio_aritmetica 
+programa : programa expressio_aritmetica 
+         | expressio_aritmetica 
 
 
 expressio_aritmetica : ID ASSIGN sumrest ENDLINE  {
@@ -110,6 +109,7 @@ expressio_aritmetica : ID ASSIGN sumrest ENDLINE  {
 
 
 /* Priority Hierarchy */
+
 
 matrix_value : FLOAT    { $$.value_type = FLOAT_TYPE; $$.value_data.real = $1;  }
              | INTEGER  { $$.value_type = INT_TYPE; $$.value_data.enter = $1; }

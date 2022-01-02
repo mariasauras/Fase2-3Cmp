@@ -44,6 +44,14 @@ comment ([#][^\n\"\']* | [#=][^\"\']*[=#])
                             }
                             
 
+"::"                        { return DDP; }
+
+"return"                    { return RETURN; }
+
+"end"                       { return END; }
+
+"function"                  { return FUNC; }
+
 "("                         { return OP; }
 
 ")"                         { return CP; }
@@ -71,24 +79,6 @@ comment ([#][^\n\"\']* | [#=][^\"\']*[=#])
 <MATRIX>" "+                { return SPACE; }        
 
 " "*"]"                     { BEGIN INITIAL; return CC; }
-
-">"                         { return GREATERTHAN; }
-
-">="                        { return GREATEREQ; }
-
-"<"                         { return LESSTHAN; }
-
-"<="                        { return LESSEQ; }
-
-"=="                        { return EQ; }
-
-"!="                        { return DIF; }
-
-"!"                         { return NOT; }
-
-"&&"                        { return AND; }
-
-"||"                        { return OR; }
 
 {text}                      {
                               yylval.st.value_data.ident.lexema = strdup(yytext);

@@ -87,7 +87,7 @@ void yyerror(char *explanation)
 
 void sum_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
-  if(v1.value_type == BOOL_TYPE || v2.value_type == BOOL_TYPE  || v1.value_type == STRING_TYPE || v2.value_type == STRING_TYPE){
+  if(v1.value_type == STRING_TYPE || v2.value_type == STRING_TYPE){
     yyerror("Can't operate with these value type");
   } else {
     if (v1.value_type == INT_TYPE && v2.value_type == INT_TYPE){
@@ -160,7 +160,7 @@ void sum_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
 void rest_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
-  if(v1.value_type == BOOL_TYPE || v2.value_type == BOOL_TYPE  || v1.value_type == STRING_TYPE || v2.value_type == STRING_TYPE){
+  if(v1.value_type == STRING_TYPE || v2.value_type == STRING_TYPE){
     yyerror("Can't operate with these value type");
   } else {
     if (v1.value_type == INT_TYPE && v2.value_type == INT_TYPE){
@@ -234,9 +234,6 @@ void rest_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
 void mul_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
-  if(v1.value_type == BOOL_TYPE || v2.value_type == BOOL_TYPE ){
-    yyerror("Can't operate with these value type");
-  } else {
     if (v1.value_type == INT_TYPE && v2.value_type == INT_TYPE){
       (*val).value_type = INT_TYPE;
       (*val).value_data.enter = v1.value_data.enter * v2.value_data.enter;
@@ -382,12 +379,12 @@ void mul_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
       strcpy((*val).value_data.ident.lexema, v1.value_data.ident.lexema);
       strcat((*val).value_data.ident.lexema, v2.value_data.ident.lexema);
     }
-  }
+  
 }
 
 void div_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
-  if(v1.value_type == BOOL_TYPE || v2.value_type == BOOL_TYPE  || v1.value_type == STRING_TYPE || v2.value_type == STRING_TYPE){
+  if(v1.value_type == STRING_TYPE || v2.value_type == STRING_TYPE){
     yyerror("Can't operate with these value type");
   } else {
     if (v1.value_type == INT_TYPE && v2.value_type == INT_TYPE){
@@ -409,8 +406,7 @@ void div_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
 void mod_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
-  if(v1.value_type == BOOL_TYPE || v2.value_type == BOOL_TYPE  || v1.value_type == STRING_TYPE || 
-  v2.value_type == STRING_TYPE || v1.value_type == FLOAT_TYPE || v2.value_type == FLOAT_TYPE ){
+  if(v1.value_type == STRING_TYPE || v2.value_type == STRING_TYPE || v1.value_type == FLOAT_TYPE || v2.value_type == FLOAT_TYPE ){
     yyerror("Can't operate with these value type");
   } else {
     (*val).value_type = INT_TYPE;
@@ -420,7 +416,7 @@ void mod_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
 void pow_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
-  if(v1.value_type == BOOL_TYPE || v2.value_type == BOOL_TYPE  || v1.value_type == STRING_TYPE || v2.value_type == STRING_TYPE){
+  if(v1.value_type == STRING_TYPE || v2.value_type == STRING_TYPE){
     yyerror("Can't operate with these value type");
   } else {
     if (v1.value_type == INT_TYPE && v2.value_type == INT_TYPE){
@@ -688,7 +684,8 @@ void acces_matrix(sym_value_type * matrix, char * id, sym_value_type v1, sym_val
 /*                 BOOLEAN & RELATIONAL FUNCTIONS                     */
 /**********************************************************************/
 
-/* */
+/*       EN LA FASE 2 NO USAREMOS BOLEANOS ==> Dejamos comentadas las funciones que les corresponden.
+
 void not_op(sym_value_type * not, sym_value_type v1){
 
   if(v1.value_type == BOOL_TYPE){
@@ -899,3 +896,7 @@ void dif_op(sym_value_type * dif, sym_value_type v1, sym_value_type v2){
       yyerror("ERROR! Both values should be of the same type");
    } else yyerror("The value can only be integer or float");
 }
+*/
+/**********************************************************************/
+/*                            C3A  FUNCTIONS                          */
+/**********************************************************************/
