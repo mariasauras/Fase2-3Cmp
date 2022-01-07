@@ -925,7 +925,7 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
   char* buffer = malloc(MAX_INS*sizeof(char));
 
   
-  if (var != NULL){
+  if (var == NULL){
     char v1_buff[MAX_INS], v2_buff[MAX_INS];
 
     if(v1 != NULL){
@@ -954,12 +954,22 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
         sprintf(v2_buff, "%ld", v2->value_data.ident.lexema);
       }
 
-    }
+    } 
 
-    sprintf(buffer, "%03ld: $%ld := %s %s %s", ln_inst, tmp, v1_buff, op, v2_buff);
+    sprintf(buffer, "%03ld: $t%ld := %s %s %s", ln_inst, tmp, v1_buff, op, v2_buff);
     instructions_buffer[ln_inst-1] = buffer;
     ln_inst++;
     
+  }else {
+    /* en el caso en que Var == NULL, significará que solo tendremos un operando, es por eso que solo tenemos en cuenta V1.*/
+    if(v1 == NULL)
+      sprintf(buffer, "%03ld: %s:= $t%ld",ln_inst,var,tmp);
+    else
+      if(v1->value_type == INTEGER_TYPE)
+        sprintf(buffer, "%03ld: %s:= %ld",ln_inst,var,v1->value_data.enter);
+      else if (v1->value_type == FLOAT_TYPE)
+        sprintf(buffer, "%03ld: %s:= %f",ln_inst,var,v1->value_data.float);
+
   }
 
 }
