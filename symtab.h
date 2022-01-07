@@ -26,6 +26,8 @@ typedef enum{
   	STRING_TYPE,
 	ID_TYPE,
 	MATRIX_TYPE,
+	TMP,
+	FUNCTION
 }type;															
 
 typedef struct data{
@@ -44,6 +46,8 @@ typedef struct data{
 	long column;
 	long num_elems;
 	type matrix_type;
+	type tmp_type;
+	type id_type;
 }data;
 
 typedef struct sym_value_type {

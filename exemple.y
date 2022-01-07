@@ -1,6 +1,6 @@
 /*
-* Olau Sancho Souto & Maria Sauras Fernandez
-*   First part of Minijulia Compiler
+*         Maria Sauras Fernandez
+*   Second part of Minijulia Compiler
 *        Sintactical class (BISON)
 */
 
@@ -12,6 +12,15 @@ extern FILE *yyout;
 extern int yylineno;
 extern int yylex();
 /*extern void yyerror(char*);*/
+
+/*Array to save the 3AC code*/
+
+char* instructions_buffer[1000];
+
+/* Control Var to generated line number of the instruction and temporally variables*/
+unsigned long ln_inst = 1;
+
+unsigned long tmp_cnt = 0;
 
 %}
 

@@ -1,6 +1,6 @@
 /*
-* Olau Sancho Souto & Maria Sauras Fernandez
-*   First part of Minijulia Compiler
+*         Maria Sauras Fernandez
+*   Second part of Minijulia Compiler
 *           Lexical class (Flex)
 */
 
