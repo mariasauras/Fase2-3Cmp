@@ -66,5 +66,15 @@
     void dif_op(sym_value_type * dif, sym_value_type v1, sym_value_type v2);
 
 
+    /**********************************************************************/
+    /*                            C3A  FUNCTIONS                          */
+    /**********************************************************************/
+    unsigned long getTmp();
+    
+    void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_type* v2);
+
+    void getType(type* x, type* y, sym_value_type v1, sym_value_type v2);
+
+
 
 #endif

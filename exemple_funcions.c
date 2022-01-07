@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#define MAX_INS 50
 
 extern int yyparse();
 extern FILE *yyin;
@@ -81,6 +82,7 @@ int analisi_semantica(void)
 void yyerror(char *explanation)
 {
   fprintf(stderr, "Error: %s , in line %d\n", explanation, yylineno);
+  exit(1);
 }
 
 /**********************************************************************/
@@ -109,40 +111,40 @@ void sum_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
   } else {
 /*                         INDIRECT CASE                                 */
     enum type x, y;
+    unsigned long tmp;
+    char sum_buffer[10];
+    sprintf(sum_buffer,"%s","ADDF");
+  
+    /* Tipo de valor de las variables x e y*/
+    getType(&x,&y,v1,v2);
+    
 
-    if(v1.value_type == TMP && v2.value_type == TMP){
-      x = v1.value_data.tmp_type;
-      y = v2.value_data.tmp_type;
-    } else if(v1.value_type == ID_TYPE && v2.value_type == ID_TYPE){
-      x = v1.value_data.id_type;
-      y = v2.value_data.id_type;
-    } else if(v1.value_type == TMP && v2.value_type == ID_TYPE){
-      x = v1.value_data.tmp_type;
-      y = v2.value_data.id_type;
-    } else if(v1.value_type == ID_TYPE && v2.value_type == TMP){
-      x = v1.value_data.id_type;
-      y = v2.value_data.tmp_type;
-    }else{
-      x = v1.value_type;
-      y = v2.value_type;
-    }
+    if(x == FLOAT_TYPE && y == INTEGER_TYPE){
+      tmp = getTmp();
+      emet(NULL, tmp, NULL, "I2F", &v2);
+      v2.value_type = TMP_TYPE;
+      v2.value_data.tmp_val = tmp;
 
-    if(x == FLOAT && y == INTEGER){
-      
-    } else if (x == INTEGER && y == FLOAT){
+    } else if (x == INTEGER_TYPE && y == FLOAT_TYPE){
+      tmp = getTmp();
+      emet(NULL, tmp, NULL, "I2F", &v1);
+      v1.value_type = TMP_TYPE;
+      v1.value_data.tmp_val = tmp;
 
-    } else if(x == INTEGER && y == INTEGER){
+    } else if(x == INTEGER_TYPE && y == INTEGER_TYPE)
+      sprintf(sum_buffer,"%s","ADDI");
 
-    } else if(x == FLOAT && y == FLOAT){ 
-
-    } else {
-      yyerror("Can't operate with these values");
-    }
-      
-
+      else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
+       yyerror("Can't operate with these values");
+    
+    
+    tmp = getTmp();
+    emet(NULL, tmp, &v1, sum_buffer, &v2);
+    (*val).value_type = TMP_TYPE;
+    (*val).value_data.tmp_val = tmp; 
   }
 }
-}
+
 
 void rest_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
@@ -883,6 +885,81 @@ void dif_op(sym_value_type * dif, sym_value_type v1, sym_value_type v2){
    } else yyerror("The value can only be integer or float");
 }
 */
+
 /**********************************************************************/
 /*                            C3A  FUNCTIONS                          */
 /**********************************************************************/
+
+/* Function to calculte temp variable.*/
+unsigned long getTmp(){
+  return tmp_cnt++;
+}
+
+
+
+/* Función que comprueba el tipo de las variables v1 y v2 y le da valor de tipo a X e Y. */
+void getType(type* x, type* y, sym_value_type v1, sym_value_type v2){
+
+  if(v1.value_type == TMP && v2.value_type == TMP){
+      x = v1.value_data.tmp_type;
+      y = v2.value_data.tmp_type;
+    } else if(v1.value_type == ID_TYPE && v2.value_type == ID_TYPE){
+      x = v1.value_data.id_type;
+      y = v2.value_data.id_type;
+    } else if(v1.value_type == TMP && v2.value_type == ID_TYPE){
+      x = v1.value_data.tmp_type;
+      y = v2.value_data.id_type;
+    } else if(v1.value_type == ID_TYPE && v2.value_type == TMP){
+      x = v1.value_data.id_type;
+      y = v2.value_data.tmp_type;
+    }else{
+      x = v1.value_type;
+      y = v2.value_type;
+    }
+
+}
+
+/* La función emet genera la instrucción. */
+void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_type* v2){
+
+  char* buffer = malloc(MAX_INS*sizeof(char));
+
+  
+  if (var != NULL){
+    char v1_buff[MAX_INS], v2_buff[MAX_INS];
+
+    if(v1 != NULL){
+
+      if(v1.value_type == INTEGER_TYPE){
+        sprintf(v1_buff, "%ld", v1->value_data.enter);
+      } else if(v1.value_type == FLOAT_TYPE){
+        sprintf(v1_buff, "%ld", v1->value_data.real);
+      }else if(v1.value_type == TMP_TYPE){
+        sprintf(v1_buff, "%ld", v1->value_data.tmp_val);
+      } else if(v1.value_type == ID_TYPE){
+        sprintf(v1_buff, "%ld", v1->value_data.ident.lexema);
+      }
+
+    }
+
+    if(v2 != NULL){
+
+      if(v1.value_type == INTEGER_TYPE){
+        sprintf(v2_buff, "%ld", v2->value_data.enter);
+      } else if(v2.value_type == FLOAT_TYPE){
+        sprintf(v2_buff, "%ld", v2->value_data.real);
+      }else if(v2.value_type == TMP_TYPE){
+        sprintf(v2_buff, "%ld", v2->value_data.tmp_val);
+      } else if(v2.value_type == ID_TYPE){
+        sprintf(v2_buff, "%ld", v2->value_data.ident.lexema);
+      }
+
+    }
+
+    sprintf(buffer, "%03ld: $%ld := %s %s %s", ln_inst, tmp, v1_buff, op, v2_buff);
+    instructions_buffer[ln_inst-1] = buffer;
+    ln_inst++;
+    
+  }
+
+}

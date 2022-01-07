@@ -45,6 +45,7 @@ typedef struct data{
 	long row;
 	long column;
 	long num_elems;
+	long tmp_val;
 	type matrix_type;
 	type tmp_type;
 	type id_type;
