@@ -109,7 +109,7 @@ void sum_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     (*val).value_type = FLOAT_TYPE;
     (*val).value_data.real = v1.value_data.real + v2.value_data.real;
   } else {
-/*                         INDIRECT CASE                                 */
+  /*                         INDIRECT CASE                                 */
     enum type x, y;
     unsigned long tmp;
     char sum_buffer[10];
@@ -145,283 +145,259 @@ void sum_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
   }
 }
 
-
 void rest_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
-  if(v1.value_type == STRING_TYPE || v2.value_type == STRING_TYPE){
-    yyerror("Can't operate with these value type");
+  /*                          DIRECT CASE                                 */
+  if (v1.value_type == INT_TYPE && v2.value_type == INT_TYPE){
+    (*val).value_type = INT_TYPE;
+    (*val).value_data.enter = v1.value_data.enter - v2.value_data.enter;
+
+  } else if(v1.value_type == INT_TYPE && v2.value_type == FLOAT_TYPE){
+    (*val).value_type = FLOAT_TYPE;
+    (*val).value_data.real = v1.value_data.enter - v2.value_data.real;
+
+  } else if(v1.value_type == FLOAT_TYPE && v2.value_type == INT_TYPE){
+    (*val).value_type = FLOAT_TYPE;
+    (*val).value_data.real = v1.value_data.real - v2.value_data.enter;
+    
+  } else if (v1.value_type == FLOAT_TYPE && v2.value_type == FLOAT_TYPE){
+    (*val).value_type = FLOAT_TYPE;
+    (*val).value_data.real = v1.value_data.real - v2.value_data.real;
   } else {
-    if (v1.value_type == INT_TYPE && v2.value_type == INT_TYPE){
-      (*val).value_type = INT_TYPE;
-      (*val).value_data.enter = v1.value_data.enter - v2.value_data.enter;
-    } else if(v1.value_type == INT_TYPE && v2.value_type == FLOAT_TYPE){
-      (*val).value_type = FLOAT_TYPE;
-      (*val).value_data.real = v1.value_data.enter - v2.value_data.real;
-    } else if(v1.value_type == FLOAT_TYPE && v2.value_type == INT_TYPE){
-       (*val).value_type = FLOAT_TYPE;
-      (*val).value_data.real = v1.value_data.real - v2.value_data.enter;
-    } else if (v1.value_type == FLOAT_TYPE && v2.value_type == FLOAT_TYPE){
-      (*val).value_type = FLOAT_TYPE;
-      (*val).value_data.real = v1.value_data.real - v2.value_data.real;
-      
-    }else if(v1.value_type == MATRIX_TYPE && v2.value_type == MATRIX_TYPE){
-      (*val).value_type = MATRIX_TYPE;
-      
-      if (v1.value_data.row != v2.value_data.row)
-        yyerror("ERROR! Incompatible dimension.");
-      
-      if(v1.value_data.matrix_type == INT_TYPE && v2.value_data.matrix_type == INT_TYPE){
-        (*val).value_data.matrix_type = INT_TYPE;
-        int pos;
-        (*val).value_data.integer_matrix = calloc(v1.value_data.num_elems+v2.value_data.num_elems, sizeof(long));
-        if((*val).value_data.integer_matrix == NULL) yyerror("Error. Can't inicialize heap memory");
+  /*                         INDIRECT CASE                                 */
+    enum type x, y;
+    unsigned long tmp;
+    char sum_buffer[10];
+    sprintf(sum_buffer,"%s","SUBF");
+  
+    /* Tipo de valor de las variables x e y*/
+    getType(&x,&y,v1,v2);
+    
 
-        for(int i = 0; i<v1.value_data.row; i++)
-          for(int j = 0; j<v1.value_data.column; j++){
-            pos = v1.value_data.column*i+j;
-            (*val).value_data.integer_matrix[pos] = v1.value_data.integer_matrix[pos] - v2.value_data.integer_matrix[pos]; 
-          }
+    if(x == FLOAT_TYPE && y == INTEGER_TYPE){
+      tmp = getTmp();
+      emet(NULL, tmp, NULL, "I2F", &v2);
+      v2.value_type = TMP_TYPE;
+      v2.value_data.tmp_val = tmp;
 
-      } else if(v1.value_data.matrix_type == FLOAT_TYPE && v2.value_data.matrix_type == FLOAT_TYPE){
-        (*val).value_data.matrix_type = FLOAT_TYPE;
-        int pos;
-        (*val).value_data.float_matrix = calloc(v1.value_data.num_elems+v2.value_data.num_elems, sizeof(float));
-        if((*val).value_data.float_matrix == NULL) yyerror("Error. Can't inicialize heap memory");
+    } else if (x == INTEGER_TYPE && y == FLOAT_TYPE){
+      tmp = getTmp();
+      emet(NULL, tmp, NULL, "I2F", &v1);
+      v1.value_type = TMP_TYPE;
+      v1.value_data.tmp_val = tmp;
 
-        for(int i = 0; i<v1.value_data.row; i++)
-          for(int j = 0; j<v1.value_data.column; j++){
-            pos = v1.value_data.column*i+j;
-            (*val).value_data.float_matrix[pos] = v1.value_data.float_matrix[pos] - v2.value_data.float_matrix[pos]; 
-          }  
-      } else if(v1.value_data.matrix_type == FLOAT_TYPE && v2.value_data.matrix_type == INT_TYPE){
-        (*val).value_data.matrix_type = FLOAT_TYPE;
-        int pos;
-        (*val).value_data.float_matrix = calloc(v1.value_data.num_elems+v2.value_data.num_elems, sizeof(float));
-        if((*val).value_data.float_matrix == NULL) yyerror("Error. Can't inicialize heap memory");
+    } else if(x == INTEGER_TYPE && y == INTEGER_TYPE)
+      sprintf(sum_buffer,"%s","SUBI");
 
-        for(int i = 0; i<v1.value_data.row; i++)
-          for(int j = 0; j<v1.value_data.column; j++){
-            pos = v1.value_data.column*i+j;
-            (*val).value_data.float_matrix[pos] = v1.value_data.float_matrix[pos] - (float)v2.value_data.integer_matrix[pos]; 
-          }  
-      } else if(v1.value_data.matrix_type == INT_TYPE && v2.value_data.matrix_type == FLOAT_TYPE){
-        (*val).value_data.matrix_type = FLOAT_TYPE;
-        int pos;
-        (*val).value_data.float_matrix = calloc(v1.value_data.num_elems+v2.value_data.num_elems, sizeof(float));
-        if((*val).value_data.float_matrix == NULL) yyerror("Error. Can't inicialize heap memory");
-
-        for(int i = 0; i<v1.value_data.row; i++)
-          for(int j = 0; j<v1.value_data.column; j++){
-            pos = v1.value_data.column*i+j;
-            (*val).value_data.float_matrix[pos] = v2.value_data.float_matrix[pos] - (float)v1.value_data.integer_matrix[pos]; 
-          }  
-      } else yyerror("Can't exectue sum operation with vectors or matrices if value are different than FLOAT or INTEGER");
-    }
+      else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
+       yyerror("Can't operate with these values");
+    
+    
+    tmp = getTmp();
+    emet(NULL, tmp, &v1, sum_buffer, &v2);
+    (*val).value_type = TMP_TYPE;
+    (*val).value_data.tmp_val = tmp; 
   }
 }
 
 void mul_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
-    if (v1.value_type == INT_TYPE && v2.value_type == INT_TYPE){
-      (*val).value_type = INT_TYPE;
-      (*val).value_data.enter = v1.value_data.enter * v2.value_data.enter;
+  /*                          DIRECT CASE                                 */
+  if (v1.value_type == INT_TYPE && v2.value_type == INT_TYPE){
+    (*val).value_type = INT_TYPE;
+    (*val).value_data.enter = v1.value_data.enter * v2.value_data.enter;
 
-    } else if(v1.value_type == INT_TYPE && v2.value_type == FLOAT_TYPE){
-      (*val).value_type = FLOAT_TYPE;
-      (*val).value_data.real = v1.value_data.enter * v2.value_data.real;
+  } else if(v1.value_type == INT_TYPE && v2.value_type == FLOAT_TYPE){
+    (*val).value_type = FLOAT_TYPE;
+    (*val).value_data.real = v1.value_data.enter * v2.value_data.real;
 
-    } else if(v1.value_type == FLOAT_TYPE && v2.value_type == INT_TYPE){
-       (*val).value_type = FLOAT_TYPE;
-      (*val).value_data.real = v1.value_data.real * v2.value_data.enter;
+  } else if(v1.value_type == FLOAT_TYPE && v2.value_type == INT_TYPE){
+    (*val).value_type = FLOAT_TYPE;
+    (*val).value_data.real = v1.value_data.real * v2.value_data.enter;
+    
+  } else if (v1.value_type == FLOAT_TYPE && v2.value_type == FLOAT_TYPE){
+    (*val).value_type = FLOAT_TYPE;
+    (*val).value_data.real = v1.value_data.real * v2.value_data.real;
+  } else {
+  /*                         INDIRECT CASE                                 */
+    enum type x, y;
+    unsigned long tmp;
+    char sum_buffer[10];
+    sprintf(sum_buffer,"%s","MULF");
+  
+    /* Tipo de valor de las variables x e y*/
+    getType(&x,&y,v1,v2);
+    
 
-    } else if(v1.value_type == FLOAT_TYPE && v2.value_type == FLOAT_TYPE) {
-      (*val).value_type = FLOAT_TYPE;
-      (*val).value_data.real = v1.value_data.real * v2.value_data.real;
+    if(x == FLOAT_TYPE && y == INTEGER_TYPE){
+      tmp = getTmp();
+      emet(NULL, tmp, NULL, "I2F", &v2);
+      v2.value_type = TMP_TYPE;
+      v2.value_data.tmp_val = tmp;
 
-    } else if(v1.value_type == MATRIX_TYPE && v2.value_type == MATRIX_TYPE) {
-      (*val).value_type = MATRIX_TYPE;
-      
-      if(v1.value_data.column != v2.value_data.row){
-         yyerror("BAD DECLARATION: The num. of rows of matrix A should be equal to the number of column of matrix B");
-      } else {
+    } else if (x == INTEGER_TYPE && y == FLOAT_TYPE){
+      tmp = getTmp();
+      emet(NULL, tmp, NULL, "I2F", &v1);
+      v1.value_type = TMP_TYPE;
+      v1.value_data.tmp_val = tmp;
 
-        if( v1.value_data.matrix_type == INT_TYPE && v2.value_data.matrix_type == INT_TYPE){
-          (*val).value_data.matrix_type = INT_TYPE;
-          int pos,p,p1,sum=0;
+    } else if(x == INTEGER_TYPE && y == INTEGER_TYPE)
+      sprintf(sum_buffer,"%s","MULI");
 
-          (*val).value_data.integer_matrix = calloc(v1.value_data.row*v2.value_data.column, sizeof(long));
-          if((*val).value_data.integer_matrix == NULL) yyerror("Can't inicialize heap memory");
-
-          (*val).value_data.row = v1.value_data.row;
-          (*val).value_data.column = v2.value_data.column;
-          (*val).value_data.num_elems = v1.value_data.row*v2.value_data.column;
-
-          for(int i = 0; i<v1.value_data.row; i++)
-            for(int j = 0; j<v2.value_data.column; j++){
-              pos = v2.value_data.column*i+j;
-              for(int k = 0; k< v2.value_data.row; k++){
-                p = v1.value_data.column*i + k;
-                p1 = v2.value_data.column*k + j;
-                sum = sum +  v1.value_data.integer_matrix[p] * v2.value_data.integer_matrix[p1];
-              } 
-              (*val).value_data.integer_matrix[pos] = sum;
-              sum = 0;
-            }
-        } else if(v1.value_data.matrix_type == INT_TYPE && v2.value_data.matrix_type == FLOAT_TYPE) {
-          (*val).value_data.matrix_type = FLOAT_TYPE;
-          int pos,p,p1,sum=0;
-
-          (*val).value_data.float_matrix = calloc(v1.value_data.row*v2.value_data.column, sizeof(long));
-          if((*val).value_data.float_matrix == NULL) yyerror("Can't inicialize heap memory");
-
-          (*val).value_data.row = v1.value_data.row;
-          (*val).value_data.column = v2.value_data.column;
-          (*val).value_data.num_elems = v1.value_data.row*v2.value_data.column;
-
-          for(int i = 0; i<v1.value_data.row; i++)
-            for(int j = 0; j<v2.value_data.column; j++){
-              pos = v2.value_data.column*i+j;
-              for(int k = 0; k< v2.value_data.row; k++){
-                p = v1.value_data.column*i + k;
-                p1 = v2.value_data.column*k + j;
-                sum = sum +  (float)v1.value_data.integer_matrix[p] * v2.value_data.float_matrix[p1];
-              } 
-              (*val).value_data.float_matrix[pos] = sum;
-              sum = 0;
-            }
-
-        } else if(v1.value_data.matrix_type == FLOAT_TYPE && v2.value_data.matrix_type == INT_TYPE) {
-          (*val).value_data.matrix_type = FLOAT_TYPE;
-          int pos,p,p1,sum=0;
-
-          (*val).value_data.float_matrix = calloc(v1.value_data.row*v2.value_data.column, sizeof(long));
-          if((*val).value_data.float_matrix == NULL) yyerror("Can't inicialize heap memory");
-
-          (*val).value_data.row = v1.value_data.row;
-          (*val).value_data.column = v2.value_data.column;
-          (*val).value_data.num_elems = v1.value_data.row*v2.value_data.column;
-
-          for(int i = 0; i<v1.value_data.row; i++)
-            for(int j = 0; j<v2.value_data.column; j++){
-              pos = v2.value_data.column*i+j;
-              for(int k = 0; k< v2.value_data.row; k++){
-                p = v1.value_data.column*i + k;
-                p1 = v2.value_data.column*k + j;
-                sum = sum +  v1.value_data.float_matrix[p] * (float)v2.value_data.integer_matrix[p1];
-              } 
-              (*val).value_data.float_matrix[pos] = sum;
-              sum = 0;
-            }
-
-        } else if(v1.value_data.matrix_type == FLOAT_TYPE && v2.value_data.matrix_type == INT_TYPE) {
-          (*val).value_data.matrix_type = FLOAT_TYPE;
-          int pos,p,p1,sum=0;
-
-          (*val).value_data.float_matrix = calloc(v1.value_data.row*v2.value_data.column, sizeof(long));
-          if((*val).value_data.float_matrix == NULL) yyerror("Can't inicialize heap memory");
-
-          (*val).value_data.row = v1.value_data.row;
-          (*val).value_data.column = v2.value_data.column;
-          (*val).value_data.num_elems = v1.value_data.row*v2.value_data.column;
-
-          for(int i = 0; i<v1.value_data.row; i++)
-            for(int j = 0; j<v2.value_data.column; j++){
-              pos = v2.value_data.column*i+j;
-              for(int k = 0; k< v2.value_data.row; k++){
-                p = v1.value_data.column*i + k;
-                p1 = v2.value_data.column*k + j;
-                sum = sum +  v1.value_data.float_matrix[p] * (float)v2.value_data.integer_matrix[p1];
-              } 
-              (*val).value_data.float_matrix[pos] = sum;
-              sum = 0;
-            }
-        } else {
-          (*val).value_data.matrix_type = FLOAT_TYPE;
-          int pos,p,p1,sum=0;
-
-          (*val).value_data.float_matrix = calloc(v1.value_data.row*v2.value_data.column, sizeof(long));
-          if((*val).value_data.float_matrix == NULL) yyerror("Can't inicialize heap memory");
-
-          (*val).value_data.row = v1.value_data.row;
-          (*val).value_data.column = v2.value_data.column;
-          (*val).value_data.num_elems = v1.value_data.row*v2.value_data.column;
-
-          for(int i = 0; i<v1.value_data.row; i++)
-            for(int j = 0; j<v2.value_data.column; j++){
-              pos = v2.value_data.column*i+j;
-              for(int k = 0; k< v2.value_data.row; k++){
-                p = v1.value_data.column*i + k;
-                p1 = v2.value_data.column*k + j;
-                sum = sum +  v1.value_data.float_matrix[p] * v2.value_data.float_matrix[p1];
-              } 
-              (*val).value_data.float_matrix[pos] = sum;
-              sum = 0;
-            }
-        }
-      }
-    } else{
-      /* CONCAT*/
-      (*val).value_type = STRING_TYPE;
-      (*val).value_data.ident.lexema = malloc(strlen(v1.value_data.ident.lexema) + strlen(v2.value_data.ident.lexema) + 1);
-      if((*val).value_data.ident.lexema == NULL) yyerror("Can't inicialize heap memory for CONCAT fuinction");
-      strcpy((*val).value_data.ident.lexema, v1.value_data.ident.lexema);
-      strcat((*val).value_data.ident.lexema, v2.value_data.ident.lexema);
-    }
+      else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
+       yyerror("Can't operate with these values");
+    
+    
+    tmp = getTmp();
+    emet(NULL, tmp, &v1, sum_buffer, &v2);
+    (*val).value_type = TMP_TYPE;
+    (*val).value_data.tmp_val = tmp; 
+  }
   
 }
 
 void div_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
+  /*                          DIRECT CASE                                 */
+  if (v1.value_type == INT_TYPE && v2.value_type == INT_TYPE){
+    (*val).value_type = INT_TYPE;
+    (*val).value_data.enter = v1.value_data.enter / v2.value_data.enter;
 
-  if(v1.value_type == STRING_TYPE || v2.value_type == STRING_TYPE){
-    yyerror("Can't operate with these value type");
+  } else if(v1.value_type == INT_TYPE && v2.value_type == FLOAT_TYPE){
+    (*val).value_type = FLOAT_TYPE;
+    (*val).value_data.real = v1.value_data.enter / v2.value_data.real;
+
+  } else if(v1.value_type == FLOAT_TYPE && v2.value_type == INT_TYPE){
+    (*val).value_type = FLOAT_TYPE;
+    (*val).value_data.real = v1.value_data.real / v2.value_data.enter;
+    
+  } else if (v1.value_type == FLOAT_TYPE && v2.value_type == FLOAT_TYPE){
+    (*val).value_type = FLOAT_TYPE;
+    (*val).value_data.real = v1.value_data.real / v2.value_data.real;
   } else {
-    if (v1.value_type == INT_TYPE && v2.value_type == INT_TYPE){
-      (*val).value_type = FLOAT_TYPE;
-      (*val).value_data.real = (float)v1.value_data.enter / v2.value_data.enter;
-    } else if(v1.value_type == INT_TYPE && v2.value_type == FLOAT_TYPE){
-      (*val).value_type = FLOAT_TYPE;
-      (*val).value_data.real = v1.value_data.enter / v2.value_data.real;
-    } else if(v1.value_type == FLOAT_TYPE && v2.value_type == INT_TYPE){
-       (*val).value_type = FLOAT_TYPE;
-      (*val).value_data.real = v1.value_data.real / v2.value_data.enter;
-    } else {
-      (*val).value_type = FLOAT_TYPE;
-      (*val).value_data.real = v1.value_data.real / v2.value_data.real;
-      
-    }
+  /*                         INDIRECT CASE                                 */
+    enum type x, y;
+    unsigned long tmp;
+    char sum_buffer[10];
+    sprintf(sum_buffer,"%s","DIVF");
+  
+    /* Tipo de valor de las variables x e y*/
+    getType(&x,&y,v1,v2);
+    
+
+    if(x == FLOAT_TYPE && y == INTEGER_TYPE){
+      tmp = getTmp();
+      emet(NULL, tmp, NULL, "I2F", &v2);
+      v2.value_type = TMP_TYPE;
+      v2.value_data.tmp_val = tmp;
+
+    } else if (x == INTEGER_TYPE && y == FLOAT_TYPE){
+      tmp = getTmp();
+      emet(NULL, tmp, NULL, "I2F", &v1);
+      v1.value_type = TMP_TYPE;
+      v1.value_data.tmp_val = tmp;
+
+    } else if(x == INTEGER_TYPE && y == INTEGER_TYPE)
+      sprintf(sum_buffer,"%s","DIVI");
+
+      else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
+       yyerror("Can't operate with these values");
+    
+    
+    tmp = getTmp();
+    emet(NULL, tmp, &v1, sum_buffer, &v2);
+    (*val).value_type = TMP_TYPE;
+    (*val).value_data.tmp_val = tmp; 
   }
+ 
 }
 
 void mod_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
-  if(v1.value_type == STRING_TYPE || v2.value_type == STRING_TYPE || v1.value_type == FLOAT_TYPE || v2.value_type == FLOAT_TYPE ){
-    yyerror("Can't operate with these value type");
-  } else {
+  if(v1.value_type == INT_TYPE && v2.value_type == INT_TYPE ){
     (*val).value_type = INT_TYPE;
     (*val).value_data.enter = v1.value_data.enter % v2.value_data.enter;
+  } else{
+
+    /*                         INDIRECT CASE                                 */
+    enum type x, y;
+    unsigned long tmp;
+    char mod_buffer[10];
+    sprintf(mod_buffer,"%s","MOD");
+  
+    /* Tipo de valor de las variables x e y*/
+    getType(&x,&y,v1,v2);
+    
+
+    if(x == INTEGER && y == INTEGER_TYPE){
+    
+      tmp = getTmp();
+      emet(NULL, tmp, &v1, sum_buffer, &v2);
+      (*val).value_type = TMP_TYPE;
+      (*val).value_data.tmp_val = tmp;
+
+    } else yyerror("Can't operate with these type of values.");
+
+
   }
+  
+  
+
+
+
+
 }
 
 void pow_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
-  if(v1.value_type == STRING_TYPE || v2.value_type == STRING_TYPE){
-    yyerror("Can't operate with these value type");
+  if (v1.value_type == INT_TYPE && v2.value_type == INT_TYPE){
+    (*val).value_type = INT_TYPE;
+    (*val).value_data.enter = pow(v1.value_data.enter,v2.value_data.enter);  
+  } else if(v1.value_type == INT_TYPE && v2.value_type == FLOAT_TYPE){
+    (*val).value_type = FLOAT_TYPE;
+    (*val).value_data.real = pow(v1.value_data.enter,v2.value_data.real);
+  } else if(v1.value_type == FLOAT_TYPE && v2.value_type == INT_TYPE){
+      (*val).value_type = FLOAT_TYPE;
+    (*val).value_data.real = pow(v1.value_data.real,v2.value_data.enter);
+  } else if (v1.value_type == FLOAT_TYPE && v2.value_type == FLOAT_TYPE){
+    (*val).value_type = FLOAT_TYPE;
+    (*val).value_data.real = pow(v1.value_data.real,v2.value_data.real);
   } else {
-    if (v1.value_type == INT_TYPE && v2.value_type == INT_TYPE){
-      (*val).value_type = INT_TYPE;
-      (*val).value_data.enter = pow(v1.value_data.enter,v2.value_data.enter);  
-    } else if(v1.value_type == INT_TYPE && v2.value_type == FLOAT_TYPE){
-      (*val).value_type = FLOAT_TYPE;
-      (*val).value_data.real = pow(v1.value_data.enter,v2.value_data.real);
-    } else if(v1.value_type == FLOAT_TYPE && v2.value_type == INT_TYPE){
-       (*val).value_type = FLOAT_TYPE;
-      (*val).value_data.real = pow(v1.value_data.real,v2.value_data.enter);
-    } else {
-      (*val).value_type = FLOAT_TYPE;
-      (*val).value_data.real = pow(v1.value_data.real,v2.value_data.real);
-      
-    }
+    /*                         INDIRECT CASE                                 */
+    enum type x, y;
+    unsigned long tmp;
+    char sum_buffer[10];
+    sprintf(sum_buffer,"%s","POWF");
+  
+    /* Tipo de valor de las variables x e y*/
+    getType(&x,&y,v1,v2);
+    
+
+    if(x == FLOAT_TYPE && y == INTEGER_TYPE){
+      tmp = getTmp();
+      emet(NULL, tmp, NULL, "I2F", &v2);
+      v2.value_type = TMP_TYPE;
+      v2.value_data.tmp_val = tmp;
+
+    } else if (x == INTEGER_TYPE && y == FLOAT_TYPE){
+      tmp = getTmp();
+      emet(NULL, tmp, NULL, "I2F", &v1);
+      v1.value_type = TMP_TYPE;
+      v1.value_data.tmp_val = tmp;
+
+    } else if(x == INTEGER_TYPE && y == INTEGER_TYPE)
+      sprintf(sum_buffer,"%s","POWI");
+
+      else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
+       yyerror("Can't operate with these values");
+    
+    
+    tmp = getTmp();
+    emet(NULL, tmp, &v1, sum_buffer, &v2);
+    (*val).value_type = TMP_TYPE;
+    (*val).value_data.tmp_val = tmp; 
   }
+  }
+  
 }
 
 /*********************************************************************/
