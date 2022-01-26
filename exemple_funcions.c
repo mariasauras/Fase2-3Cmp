@@ -118,7 +118,7 @@ void sum_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     /* Tipo de valor de las variables x e y*/
     getType(&x,&y,v1,v2);
     
-
+    /* Realizamos los catings y una vez hechos o si no hace falta hacer casting, hacemos la suma.*/
     if(x == FLOAT_TYPE && y == INTEGER_TYPE){
       tmp = getTmp();
       emet(NULL, tmp, NULL, "I2F", &v2);
@@ -648,7 +648,7 @@ void acces_matrix(sym_value_type * matrix, char * id, sym_value_type v1, sym_val
 /*                 BOOLEAN & RELATIONAL FUNCTIONS                     */
 /**********************************************************************/
 
-/*       EN LA FASE 2 NO USAREMOS BOLEANOS ==> Dejamos comentadas las funciones que les corresponden.
+/*       EN LA FASE 2 NO USAREMOS BOLEANOS ==> Dejamos comentadas las funciones que les corresponden. 
 
 void not_op(sym_value_type * not, sym_value_type v1){
 
@@ -872,10 +872,10 @@ unsigned long getTmp(){
 }
 
 
-
 /* Función que comprueba el tipo de las variables v1 y v2 y le da valor de tipo a X e Y. */
 void getType(type* x, type* y, sym_value_type v1, sym_value_type v2){
 
+  
   if(v1.value_type == TMP && v2.value_type == TMP){
       x = v1.value_data.tmp_type;
       y = v2.value_data.tmp_type;

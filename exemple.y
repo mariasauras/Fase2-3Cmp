@@ -57,12 +57,31 @@ unsigned long tmp_cnt = 0;
 %type <st> sumrest mullist powlist
 %type <st> matrix row  matrix_value 
 
+%type <st> func_header
+%type <st> parameters
+
+/* Declarations */
+%type main
+%type function
+%type sentences_list
+
+
+
 %start programa
 
 %%
 
-programa : programa expressio_aritmetica 
-         | expressio_aritmetica 
+programa : function_declaration main
+
+function_declaration : function_declaration function
+
+function : FUNC func_header ENDLINE sentences_list END ENDLINE
+
+func_header : ID OP parameters CP {
+                                    emet(NULL,0,NULL,"START",&$1);
+                                    $1.value_type = FUNCTION; /* El valor tipo de ID es FUNCTION */
+                                    sym_enter($1.value_data.ident.lexema, &$1);
+                                  }
 
 
 expressio_aritmetica : ID ASSIGN sumrest ENDLINE  {
