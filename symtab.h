@@ -26,7 +26,7 @@ typedef enum{
   	STRING_TYPE,
 	ID_TYPE,
 	MATRIX_TYPE,
-	TMP,
+	TMP_TYPE,
 	FUNCTION
 }type;															
 

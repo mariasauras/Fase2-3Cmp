@@ -526,8 +526,8 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "exemple.l"
 /*
-* Olau Sancho Souto & Maria Sauras Fernandez
-*   First part of Minijulia Compiler
+*         Maria Sauras Fernandez
+*   Second part of Minijulia Compiler
 *           Lexical class (Flex)
 */
 #line 8 "exemple.l"

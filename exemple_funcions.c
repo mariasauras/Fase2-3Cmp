@@ -110,7 +110,7 @@ void sum_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     (*val).value_data.real = v1.value_data.real + v2.value_data.real;
   } else {
   /*                         INDIRECT CASE                                 */
-    enum type x, y;
+    type x, y;
     unsigned long tmp;
     char sum_buffer[10];
     sprintf(sum_buffer,"%s","ADDF");
@@ -119,19 +119,19 @@ void sum_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     getType(&x,&y,v1,v2);
     
     /* Realizamos los catings y una vez hechos o si no hace falta hacer casting, hacemos la suma.*/
-    if(x == FLOAT_TYPE && y == INTEGER_TYPE){
+    if(x == FLOAT_TYPE && y == INT_TYPE){
       tmp = getTmp();
       emet(NULL, tmp, NULL, "I2F", &v2);
       v2.value_type = TMP_TYPE;
       v2.value_data.tmp_val = tmp;
 
-    } else if (x == INTEGER_TYPE && y == FLOAT_TYPE){
+    } else if (x == INT_TYPE && y == FLOAT_TYPE){
       tmp = getTmp();
       emet(NULL, tmp, NULL, "I2F", &v1);
       v1.value_type = TMP_TYPE;
       v1.value_data.tmp_val = tmp;
 
-    } else if(x == INTEGER_TYPE && y == INTEGER_TYPE)
+    } else if(x == INT_TYPE && y == INT_TYPE)
       sprintf(sum_buffer,"%s","ADDI");
 
       else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
@@ -165,7 +165,7 @@ void rest_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     (*val).value_data.real = v1.value_data.real - v2.value_data.real;
   } else {
   /*                         INDIRECT CASE                                 */
-    enum type x, y;
+    type x, y;
     unsigned long tmp;
     char sum_buffer[10];
     sprintf(sum_buffer,"%s","SUBF");
@@ -174,19 +174,19 @@ void rest_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     getType(&x,&y,v1,v2);
     
 
-    if(x == FLOAT_TYPE && y == INTEGER_TYPE){
+    if(x == FLOAT_TYPE && y == INT_TYPE){
       tmp = getTmp();
       emet(NULL, tmp, NULL, "I2F", &v2);
       v2.value_type = TMP_TYPE;
       v2.value_data.tmp_val = tmp;
 
-    } else if (x == INTEGER_TYPE && y == FLOAT_TYPE){
+    } else if (x == INT_TYPE && y == FLOAT_TYPE){
       tmp = getTmp();
       emet(NULL, tmp, NULL, "I2F", &v1);
       v1.value_type = TMP_TYPE;
       v1.value_data.tmp_val = tmp;
 
-    } else if(x == INTEGER_TYPE && y == INTEGER_TYPE)
+    } else if(x == INT_TYPE && y == INT_TYPE)
       sprintf(sum_buffer,"%s","SUBI");
 
       else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
@@ -220,7 +220,7 @@ void mul_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     (*val).value_data.real = v1.value_data.real * v2.value_data.real;
   } else {
   /*                         INDIRECT CASE                                 */
-    enum type x, y;
+    type x, y;
     unsigned long tmp;
     char sum_buffer[10];
     sprintf(sum_buffer,"%s","MULF");
@@ -229,19 +229,19 @@ void mul_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     getType(&x,&y,v1,v2);
     
 
-    if(x == FLOAT_TYPE && y == INTEGER_TYPE){
+    if(x == FLOAT_TYPE && y == INT_TYPE){
       tmp = getTmp();
       emet(NULL, tmp, NULL, "I2F", &v2);
       v2.value_type = TMP_TYPE;
       v2.value_data.tmp_val = tmp;
 
-    } else if (x == INTEGER_TYPE && y == FLOAT_TYPE){
+    } else if (x == INT_TYPE && y == FLOAT_TYPE){
       tmp = getTmp();
       emet(NULL, tmp, NULL, "I2F", &v1);
       v1.value_type = TMP_TYPE;
       v1.value_data.tmp_val = tmp;
 
-    } else if(x == INTEGER_TYPE && y == INTEGER_TYPE)
+    } else if(x == INT_TYPE && y == INT_TYPE)
       sprintf(sum_buffer,"%s","MULI");
 
       else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
@@ -275,7 +275,7 @@ void div_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     (*val).value_data.real = v1.value_data.real / v2.value_data.real;
   } else {
   /*                         INDIRECT CASE                                 */
-    enum type x, y;
+    type x, y;
     unsigned long tmp;
     char sum_buffer[10];
     sprintf(sum_buffer,"%s","DIVF");
@@ -284,19 +284,19 @@ void div_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     getType(&x,&y,v1,v2);
     
 
-    if(x == FLOAT_TYPE && y == INTEGER_TYPE){
+    if(x == FLOAT_TYPE && y == INT_TYPE){
       tmp = getTmp();
       emet(NULL, tmp, NULL, "I2F", &v2);
       v2.value_type = TMP_TYPE;
       v2.value_data.tmp_val = tmp;
 
-    } else if (x == INTEGER_TYPE && y == FLOAT_TYPE){
+    } else if (x == INT_TYPE && y == FLOAT_TYPE){
       tmp = getTmp();
       emet(NULL, tmp, NULL, "I2F", &v1);
       v1.value_type = TMP_TYPE;
       v1.value_data.tmp_val = tmp;
 
-    } else if(x == INTEGER_TYPE && y == INTEGER_TYPE)
+    } else if(x == INT_TYPE && y == INT_TYPE)
       sprintf(sum_buffer,"%s","DIVI");
 
       else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
@@ -319,7 +319,7 @@ void mod_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
   } else{
 
     /*                         INDIRECT CASE                                 */
-    enum type x, y;
+    type x, y;
     unsigned long tmp;
     char mod_buffer[10];
     sprintf(mod_buffer,"%s","MOD");
@@ -328,10 +328,10 @@ void mod_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     getType(&x,&y,v1,v2);
     
 
-    if(x == INTEGER && y == INTEGER_TYPE){
+    if(x == INT_TYPE && y == INT_TYPE){
     
       tmp = getTmp();
-      emet(NULL, tmp, &v1, sum_buffer, &v2);
+      emet(NULL, tmp, &v1, mod_buffer, &v2);
       (*val).value_type = TMP_TYPE;
       (*val).value_data.tmp_val = tmp;
 
@@ -340,10 +340,6 @@ void mod_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
   }
   
-  
-
-
-
 
 }
 
@@ -363,7 +359,7 @@ void pow_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     (*val).value_data.real = pow(v1.value_data.real,v2.value_data.real);
   } else {
     /*                         INDIRECT CASE                                 */
-    enum type x, y;
+    type x, y;
     unsigned long tmp;
     char sum_buffer[10];
     sprintf(sum_buffer,"%s","POWF");
@@ -372,19 +368,19 @@ void pow_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     getType(&x,&y,v1,v2);
     
 
-    if(x == FLOAT_TYPE && y == INTEGER_TYPE){
+    if(x == FLOAT_TYPE && y == INT_TYPE){
       tmp = getTmp();
       emet(NULL, tmp, NULL, "I2F", &v2);
       v2.value_type = TMP_TYPE;
       v2.value_data.tmp_val = tmp;
 
-    } else if (x == INTEGER_TYPE && y == FLOAT_TYPE){
+    } else if (x == INT_TYPE && y == FLOAT_TYPE){
       tmp = getTmp();
       emet(NULL, tmp, NULL, "I2F", &v1);
       v1.value_type = TMP_TYPE;
       v1.value_data.tmp_val = tmp;
 
-    } else if(x == INTEGER_TYPE && y == INTEGER_TYPE)
+    } else if(x == INT_TYPE && y == INT_TYPE)
       sprintf(sum_buffer,"%s","POWI");
 
       else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
@@ -396,7 +392,7 @@ void pow_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     (*val).value_type = TMP_TYPE;
     (*val).value_data.tmp_val = tmp; 
   }
-  }
+  
   
 }
 
@@ -876,21 +872,21 @@ unsigned long getTmp(){
 void getType(type* x, type* y, sym_value_type v1, sym_value_type v2){
 
   
-  if(v1.value_type == TMP && v2.value_type == TMP){
-      x = v1.value_data.tmp_type;
-      y = v2.value_data.tmp_type;
+  if(v1.value_type == TMP_TYPE && v2.value_type == TMP_TYPE){
+      (*x) = v1.value_data.tmp_type;
+      (*y) = v2.value_data.tmp_type;
     } else if(v1.value_type == ID_TYPE && v2.value_type == ID_TYPE){
-      x = v1.value_data.id_type;
-      y = v2.value_data.id_type;
-    } else if(v1.value_type == TMP && v2.value_type == ID_TYPE){
-      x = v1.value_data.tmp_type;
-      y = v2.value_data.id_type;
-    } else if(v1.value_type == ID_TYPE && v2.value_type == TMP){
-      x = v1.value_data.id_type;
-      y = v2.value_data.tmp_type;
+      (*x) = v1.value_data.id_type;
+      (*y) = v2.value_data.id_type;
+    } else if(v1.value_type == TMP_TYPE && v2.value_type == ID_TYPE){
+      (*x) = v1.value_data.tmp_type;
+      (*y) = v2.value_data.id_type;
+    } else if(v1.value_type == ID_TYPE && v2.value_type == TMP_TYPE){
+      (*x) = v1.value_data.id_type;
+      (*y) = v2.value_data.tmp_type;
     }else{
-      x = v1.value_type;
-      y = v2.value_type;
+      (*x) = v1.value_type;
+      (*y) = v2.value_type;
     }
 
 }
@@ -899,35 +895,35 @@ void getType(type* x, type* y, sym_value_type v1, sym_value_type v2){
 void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_type* v2){
 
   char* buffer = malloc(MAX_INS*sizeof(char));
+  char v1_buff[MAX_INS], v2_buff[MAX_INS];
 
   
   if (var == NULL){
-    char v1_buff[MAX_INS], v2_buff[MAX_INS];
 
     if(v1 != NULL){
 
-      if(v1.value_type == INTEGER_TYPE){
+      if(v1->value_type == INT_TYPE){
         sprintf(v1_buff, "%ld", v1->value_data.enter);
-      } else if(v1.value_type == FLOAT_TYPE){
-        sprintf(v1_buff, "%ld", v1->value_data.real);
-      }else if(v1.value_type == TMP_TYPE){
+      } else if(v1->value_type == FLOAT_TYPE){
+        sprintf(v1_buff, "%f", v1->value_data.real);
+      }else if(v1->value_type == TMP_TYPE){
         sprintf(v1_buff, "%ld", v1->value_data.tmp_val);
-      } else if(v1.value_type == ID_TYPE){
-        sprintf(v1_buff, "%ld", v1->value_data.ident.lexema);
+      } else if(v1->value_type == ID_TYPE){
+        sprintf(v1_buff, "%s", v1->value_data.ident.lexema);
       }
 
     }
 
     if(v2 != NULL){
 
-      if(v1.value_type == INTEGER_TYPE){
+      if(v2->value_type == INT_TYPE){
         sprintf(v2_buff, "%ld", v2->value_data.enter);
-      } else if(v2.value_type == FLOAT_TYPE){
-        sprintf(v2_buff, "%ld", v2->value_data.real);
-      }else if(v2.value_type == TMP_TYPE){
+      } else if(v2->value_type == FLOAT_TYPE){
+        sprintf(v2_buff, "%f", v2->value_data.real);
+      }else if(v2->value_type == TMP_TYPE){
         sprintf(v2_buff, "%ld", v2->value_data.tmp_val);
-      } else if(v2.value_type == ID_TYPE){
-        sprintf(v2_buff, "%ld", v2->value_data.ident.lexema);
+      } else if(v2->value_type == ID_TYPE){
+        sprintf(v2_buff, "%s", v2->value_data.ident.lexema);
       }
 
     } 
@@ -937,10 +933,10 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
     if(v1 == NULL)
       sprintf(buffer, "%03ld: %s:= $t%ld",ln_inst,var,tmp);
     else
-      if(v1->value_type == INTEGER_TYPE)
+      if(v1->value_type == INT_TYPE)
         sprintf(buffer, "%03ld: %s:= %ld",ln_inst,var,v1->value_data.enter);
       else if (v1->value_type == FLOAT_TYPE)
-        sprintf(buffer, "%03ld: %s:= %f",ln_inst,var,v1->value_data.float);
+        sprintf(buffer, "%03ld: %s:= %f",ln_inst,var,v1->value_data.real);
   }
 
   sprintf(buffer, "%03ld: $t%ld := %s %s %s", ln_inst, tmp, v1_buff, op, v2_buff);
@@ -961,9 +957,9 @@ void treat_parameter(sym_value_type * val, sym_value_type v1, sym_value_type val
   }else if(strcmp(val_type.value_data.ident.lexema, "Vector{Float32}") == 0){
     v1.value_type = MATRIX_TYPE;
     v1.value_data.matrix_type = FLOAT_TYPE;
-  } else yyerror('Incorrect Parameter Type.');
+  } else yyerror("Incorrect Parameter Type.");
 
   /* Guardamos en la tabla de simbolos el valor de ID*/
   sym_enter(v1.value_data.ident.lexema, &v1);
-  
+
 }

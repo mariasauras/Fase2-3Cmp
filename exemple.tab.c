@@ -68,16 +68,25 @@
 /* First part of user prologue.  */
 #line 7 "exemple.y"
 
-
 #include <stdio.h>
 #include <stdlib.h>
+#include "symtab.h"
 extern FILE *yyout;
 extern int yylineno;
 extern int yylex();
 /*extern void yyerror(char*);*/
 
+/*Array to save the 3AC code*/
 
-#line 81 "exemple.tab.c"
+char* instructions_buffer[1000];
+
+/* Control Var to generated line number of the instruction and temporally variables*/
+unsigned long ln_inst = 1;
+
+unsigned long tmp_cnt = 0;
+
+
+#line 90 "exemple.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -120,14 +129,14 @@ extern int yylex();
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 18 "exemple.y"
+#line 27 "exemple.y"
 
   /* Les definicions que s'utilitzen al %union han d'estar aqui */
   #include "exemple_dades.h"
   #include "exemple_funcions.h"
   #include "symtab.h"
 
-#line 131 "exemple.tab.c"
+#line 140 "exemple.tab.c"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -165,11 +174,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 25 "exemple.y"
+#line 34 "exemple.y"
 
   sym_value_type st;
 
-#line 173 "exemple.tab.c"
+#line 182 "exemple.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -486,18 +495,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  24
+#define YYFINAL  3
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   71
+#define YYLAST   81
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  27
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  10
+#define YYNNTS  19
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  29
+#define YYNRULES  42
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  56
+#define YYNSTATES  76
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   281
@@ -547,9 +556,11 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    55,    55,    56,    59,    96,   114,   115,   118,   119,
-     121,   122,   124,   125,   126,   128,   129,   130,   131,   133,
-     134,   136,   137,   138,   139,   140,   141,   142,   143,   144
+       0,    75,    75,    85,    93,    95,   103,   104,   105,   108,
+     115,   117,   119,   121,   122,   125,   154,   182,   183,   186,
+     187,   189,   190,   192,   193,   194,   196,   197,   198,   199,
+     201,   202,   204,   205,   206,   207,   208,   209,   210,   211,
+     221,   222,   223
 };
 #endif
 
@@ -561,8 +572,10 @@ static const char *const yytname[] =
   "$end", "error", "$undefined", "ASSIGN", "ENDLINE", "INTEGER", "ID",
   "FLOAT", "STRING", "SUMA", "RESTA", "MUL", "DIV", "MOD", "POW", "OP",
   "CP", "OC", "CC", "PC", "SPACE", "COMMA", "FP_D", "END", "DDP", "RETURN",
-  "FUNC", "$accept", "programa", "expressio_aritmetica", "matrix_value",
-  "matrix", "row", "sumrest", "mullist", "powlist", "valor", YY_NULLPTR
+  "FUNC", "$accept", "programa", "function_declaration", "function",
+  "parameters", "func_header", "push", "main", "start_program",
+  "sentences_list", "sentence", "matrix_value", "matrix", "row", "sumrest",
+  "mullist", "powlist", "valor", "func_call", YY_NULLPTR
 };
 #endif
 
@@ -577,7 +590,7 @@ static const yytype_int16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF (-12)
+#define YYPACT_NINF (-18)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -591,12 +604,14 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      19,   -12,    -2,   -12,   -12,    25,     0,    -7,     6,   -12,
-      56,    -9,     8,   -12,    25,    25,    12,    45,   -12,   -12,
-     -12,     1,    15,    25,   -12,   -12,   -12,    25,    25,    25,
-      25,    25,    25,    58,    35,   -12,   -12,     0,     0,    28,
-      -9,    -9,     8,     8,     8,   -12,   -12,   -12,    25,    15,
-     -12,    25,    41,    48,   -12,   -12
+     -18,    17,   -17,   -18,    18,   -18,   -18,     1,   -18,    22,
+     -18,     2,   -18,    16,     8,     1,   -18,    32,    46,    30,
+     -18,    33,     1,    16,    16,    15,    29,   -18,   -18,   -18,
+      36,    47,   -18,   -18,    16,    16,    16,    16,    16,    16,
+      44,    -3,    42,    19,    35,   -18,   -18,     8,     8,    46,
+      46,    30,    30,    30,   -18,    45,     9,    64,   -18,   -18,
+      16,   -18,    16,    47,   -18,    65,   -18,    66,   -18,    25,
+      54,   -18,    49,   -18,    68,   -18
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -604,24 +619,28 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,    22,    25,    21,    23,     0,     0,     0,     0,     3,
-       0,    14,    18,    20,     0,     0,    25,     0,     7,     6,
-      11,     0,     9,     0,     1,     2,     5,     0,     0,     0,
-       0,     0,     0,     0,     0,    24,    26,     0,     0,     0,
-      12,    13,    15,    16,    17,    19,     4,    27,     0,     8,
-      10,     0,     0,     0,    28,    29
+       4,     0,    12,     1,     0,     3,     2,     0,    10,     0,
+      33,    35,    32,     0,     0,    11,    14,     0,    25,    29,
+      31,     0,     0,     0,    42,    35,     0,    18,    17,    22,
+       0,    20,    13,    16,     0,     0,     0,     0,     0,     0,
+       8,     0,     0,     0,     0,    34,    36,     0,     0,    23,
+      24,    26,    27,    28,    30,     0,     0,     0,    15,    37,
+       0,    39,     0,    19,    21,     0,     9,     0,     5,     0,
+      40,     7,     0,    38,     0,     6
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -12,   -12,    31,    10,   -12,    26,    -5,   -11,    40,    20
+     -18,   -18,   -18,   -18,   -18,   -18,   -18,   -18,   -18,    48,
+     -14,    27,   -18,    34,   -13,    31,    24,    37,   -18
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     8,     9,    20,    21,    22,    10,    11,    12,    13
+      -1,     1,     2,     5,    56,     9,    21,     6,     7,    15,
+      16,    29,    30,    31,    17,    18,    19,    20,    44
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -629,54 +648,62 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      17,    14,    29,    30,    31,    18,    24,    19,    23,    33,
-      34,     1,     2,     3,     4,    15,    40,    41,    39,    36,
-      37,     5,    32,     6,     1,     2,     3,     4,     7,    15,
-       1,    16,     3,     4,     5,    38,     6,    27,    28,    25,
-       5,     7,     6,    52,    27,    28,    53,     7,    50,    51,
-      27,    28,    45,    47,    27,    28,    48,    27,    28,    54,
-      26,    35,    46,    49,    55,    27,    28,    27,    28,    42,
-      43,    44
+      26,    32,    10,    11,    12,    23,    10,    11,    12,     4,
+      42,    43,    13,    27,    14,    28,    13,     3,    14,    24,
+      57,    10,    25,    12,     8,    66,    22,    32,    34,    35,
+      67,    13,    24,    14,    34,    35,    33,    59,    34,    35,
+      60,    34,    35,    73,    39,    45,    58,    69,    40,    70,
+      55,    34,    35,    61,    46,    47,    62,    36,    37,    38,
+      51,    52,    53,    34,    35,    49,    50,    48,    68,    65,
+      41,    71,    72,    74,    75,    64,    54,     0,     0,     0,
+       0,    63
 };
 
 static const yytype_int8 yycheck[] =
 {
-       5,     3,    11,    12,    13,     5,     0,     7,    15,    14,
-      15,     5,     6,     7,     8,    17,    27,    28,    23,    18,
-      19,    15,    14,    17,     5,     6,     7,     8,    22,    17,
-       5,     6,     7,     8,    15,    20,    17,     9,    10,     8,
-      15,    22,    17,    48,     9,    10,    51,    22,    38,    21,
-       9,    10,    32,    18,     9,    10,    21,     9,    10,    18,
-       4,    16,     4,    37,    16,     9,    10,     9,    10,    29,
-      30,    31
+      13,    15,     5,     6,     7,     3,     5,     6,     7,    26,
+      23,    24,    15,     5,    17,     7,    15,     0,    17,    17,
+      23,     5,     6,     7,     6,    16,     4,    41,     9,    10,
+      21,    15,    17,    17,     9,    10,     4,    18,     9,    10,
+      21,     9,    10,    18,    14,    16,     4,    60,    15,    62,
+       6,     9,    10,    18,    18,    19,    21,    11,    12,    13,
+      36,    37,    38,     9,    10,    34,    35,    20,     4,    24,
+      22,     6,     6,    24,     6,    48,    39,    -1,    -1,    -1,
+      -1,    47
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     5,     6,     7,     8,    15,    17,    22,    28,    29,
-      33,    34,    35,    36,     3,    17,     6,    33,     5,     7,
-      30,    31,    32,    15,     0,    29,     4,     9,    10,    11,
-      12,    13,    14,    33,    33,    16,    18,    19,    20,    33,
-      34,    34,    35,    35,    35,    36,     4,    18,    21,    32,
-      30,    21,    33,    33,    18,    16
+       0,    28,    29,     0,    26,    30,    34,    35,     6,    32,
+       5,     6,     7,    15,    17,    36,    37,    41,    42,    43,
+      44,    33,     4,     3,    17,     6,    41,     5,     7,    38,
+      39,    40,    37,     4,     9,    10,    11,    12,    13,    14,
+      15,    36,    41,    41,    45,    16,    18,    19,    20,    42,
+      42,    43,    43,    43,    44,     6,    31,    23,     4,    18,
+      21,    18,    21,    40,    38,    24,    16,    21,     4,    41,
+      41,     6,     6,    18,    24,     6
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    27,    28,    28,    29,    29,    30,    30,    31,    31,
-      32,    32,    33,    33,    33,    34,    34,    34,    34,    35,
-      35,    36,    36,    36,    36,    36,    36,    36,    36,    36
+       0,    27,    28,    29,    29,    30,    31,    31,    31,    32,
+      33,    34,    35,    36,    36,    37,    37,    38,    38,    39,
+      39,    40,    40,    41,    41,    41,    42,    42,    42,    42,
+      43,    43,    44,    44,    44,    44,    44,    44,    44,    44,
+      45,    45,    45
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     2,     1,     4,     2,     1,     1,     3,     1,
-       3,     1,     3,     3,     1,     3,     3,     3,     1,     3,
-       1,     1,     1,     1,     3,     1,     3,     4,     6,     6
+       0,     2,     2,     2,     0,     6,     5,     3,     0,     5,
+       0,     2,     0,     2,     1,     4,     2,     1,     1,     3,
+       1,     3,     1,     3,     3,     1,     3,     3,     3,     1,
+       3,     1,     1,     1,     3,     1,     3,     4,     6,     4,
+       3,     1,     0
 };
 
 
@@ -1371,194 +1398,294 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 4:
-#line 59 "exemple.y"
-                                                  {
-                          (yyval.st).value_type = (yyvsp[-1].st).value_type;
-                          sym_enter((yyvsp[-3].st.value_data.ident).lexema, &(yyvsp[-1].st));
-                          (yyval.st) = (yyvsp[-1].st);
+  case 2:
+#line 75 "exemple.y"
+                                     {
+                                      emet(NULL,0,NULL,"HALT",NULL);
+                                      emet(NULL,0,NULL,"END",NULL);
 
-                          if((yyval.st).value_type == INT_TYPE){
-                            fprintf(yyout, "ID: %s value: %ld\n",(yyvsp[-3].st.value_data.ident).lexema, (yyvsp[-1].st).value_data.enter);
-                          } else if((yyval.st).value_type == FLOAT_TYPE){
-                            fprintf(yyout, "ID: %s value: %.2f\n",(yyvsp[-3].st.value_data.ident).lexema, (yyvsp[-1].st).value_data.real);
-                          }else if((yyval.st).value_type == STRING_TYPE){
-                            fprintf(yyout, "ID: %s value: %s\n",(yyvsp[-3].st.value_data.ident).lexema, (yyvsp[-1].st).value_data.ident.lexema);
-                          }else if ((yyval.st).value_type == MATRIX_TYPE){
-                              if((yyval.st).value_data.matrix_type == INT_TYPE) {
-                              int pos;
-                              if((yyval.st).value_data.row > 1) fprintf(yyout, "INTEGER MATRIX [");
-                              fprintf(yyout, "INTEGER VECTOR [");
-                              for(int i= 0; i<(yyval.st).value_data.row; i++) 
-                                for(int j= 0; j<(yyval.st).value_data.column; j++){
-                                  pos = (yyval.st).value_data.column*i+j;
-                                  fprintf(yyout, "%ld ",(yyval.st).value_data.integer_matrix[pos]);
-                                }
-                            } else if((yyval.st).value_data.matrix_type == FLOAT_TYPE) {
-                                int pos;
-                                if((yyval.st).value_data.row > 1) fprintf(yyout, "FLOAT MATRIX [");
-                                fprintf(yyout, "FLOAT VECTOR [");
-                                for(int i= 0; i<(yyval.st).value_data.row; i++) 
-                                  for(int j= 0; j<(yyval.st).value_data.column; j++){
-                                    pos = (yyval.st).value_data.column*i+j;
-                                    fprintf(yyout, "%.2f ",(yyval.st).value_data.float_matrix[pos]);
-                                  }
-                            } else yyerror("Only accept Integer or Float matrix");
-                            fprintf(yyout,"]\n");
-                            fprintf(yyout,"Num de columnas Vector/Matrix: %ld\n", (yyval.st).value_data.column);
-                            if((yyval.st).value_data.row > 1) fprintf(yyout,"Num de Filas Matrix: %ld\n", (yyval.st).value_data.row);
-                            fprintf(yyout,"Num de elems Vector/Matrix: %ld\n", (yyval.st).value_data.num_elems);
-                          }
-                        }
-#line 1414 "exemple.tab.c"
+                                      for(int i=0; i<ln_inst-1; i++){
+                                        fprintf(yyout,"%s\n",instructions_buffer[i]);
+                                        free(instructions_buffer[i]);
+                                      }
+}
+#line 1413 "exemple.tab.c"
+    break;
+
+  case 3:
+#line 85 "exemple.y"
+                                                     {
+                                                      for(int i=0; i<ln_inst-1; i++){
+                                                        fprintf(yyout,"%s\n",instructions_buffer[i]);
+                                                        free(instructions_buffer[i]);
+                                                      }
+                                                      ln_inst = 1;
+                                                      tmp_cnt = 0;                                                 
+                                                     }
+#line 1426 "exemple.tab.c"
     break;
 
   case 5:
-#line 96 "exemple.y"
-                                         {
-                          (yyval.st).value_type = (yyvsp[-1].st).value_type;
-                          if((yyval.st).value_type == INT_TYPE){
-                            fprintf(yyout, "INT value: %ld\n", (yyvsp[-1].st).value_data.enter);
-                            (yyval.st).value_data.enter= (yyvsp[-1].st).value_data.enter;
-                          } else if((yyval.st).value_type == FLOAT_TYPE){
-                            fprintf(yyout, "FLOAT value: %f\n", (yyvsp[-1].st).value_data.real);
-                            (yyval.st).value_data.real = (yyvsp[-1].st).value_data.real;
-                          }else{
-                            fprintf(yyout, "STRING value: %s\n", (yyvsp[-1].st).value_data.ident.lexema);
-                            (yyval.st).value_data.ident.lexema = (yyvsp[-1].st).value_data.ident.lexema;
-                          }
-                        }
-#line 1432 "exemple.tab.c"
+#line 95 "exemple.y"
+                                                               {
+                                                                emet(NULL,0,NULL,"END\n",NULL);
+                                                                sym_enter((yyvsp[-4].st).value_data.ident.lexema, &(yyvsp[-4].st));
+                                                                if(sym_pop_scope() != SYMTAB_OK) yyerror("Error in pop");
+                                                               }
+#line 1436 "exemple.tab.c"
     break;
 
   case 6:
-#line 114 "exemple.y"
-                        { (yyval.st).value_type = FLOAT_TYPE; (yyval.st).value_data.real = (yyvsp[0].st.value_data.real);  }
-#line 1438 "exemple.tab.c"
+#line 103 "exemple.y"
+                                          { (yyval.st).value_data.cont_params += 1; treat_parameter(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
+#line 1442 "exemple.tab.c"
     break;
 
   case 7:
-#line 115 "exemple.y"
-                        { (yyval.st).value_type = INT_TYPE; (yyval.st).value_data.enter = (yyvsp[0].st.value_data.enter); }
-#line 1444 "exemple.tab.c"
+#line 104 "exemple.y"
+                                          { (yyval.st).value_data.cont_params = 1; treat_parameter(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
+#line 1448 "exemple.tab.c"
     break;
 
   case 8:
-#line 118 "exemple.y"
-                                { row_value(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
-#line 1450 "exemple.tab.c"
+#line 105 "exemple.y"
+                                          { (yyval.st).value_data.cont_params = 0; }
+#line 1454 "exemple.tab.c"
     break;
 
   case 9:
-#line 119 "exemple.y"
-                                { (yyval.st).value_data.row = 1; }
-#line 1456 "exemple.tab.c"
+#line 108 "exemple.y"
+                                       {
+                                    emet(NULL,0,NULL,"START",&(yyvsp[-4].st));
+                                    (yyvsp[-4].st).value_type = FUNCTION; /* El valor tipo de ID es FUNCTION */
+                                    (yyvsp[-4].st).value_data.cont_params = (yyvsp[-1].st).value_data.cont_params;
+                                    (yyval.st) = (yyvsp[-4].st);
+                                  }
+#line 1465 "exemple.tab.c"
     break;
 
   case 10:
-#line 121 "exemple.y"
-                                { col_value(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
-#line 1462 "exemple.tab.c"
-    break;
-
-  case 11:
-#line 122 "exemple.y"
-                                { col_ini(&(yyval.st), (yyvsp[0].st));}
-#line 1468 "exemple.tab.c"
+#line 115 "exemple.y"
+       { sym_push_scope(); }
+#line 1471 "exemple.tab.c"
     break;
 
   case 12:
-#line 124 "exemple.y"
-                                { sum_op(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
-#line 1474 "exemple.tab.c"
-    break;
-
-  case 13:
-#line 125 "exemple.y"
-                                { rest_op(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
-#line 1480 "exemple.tab.c"
+#line 119 "exemple.y"
+                { emet(NULL, 0, NULL, "START main", NULL); }
+#line 1477 "exemple.tab.c"
     break;
 
   case 15:
-#line 128 "exemple.y"
-                              { mul_op(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
-#line 1486 "exemple.tab.c"
+#line 125 "exemple.y"
+                                      {
+
+                          type type;
+                          bool temp_type = false;
+
+                          if((yyvsp[-3].st).value_type = TMP_TYPE){
+                            type = (yyvsp[-3].st).value_data.tmp_val;
+                            temp_type = true;
+                          } else type = (yyvsp[-3].st).value_type;
+
+                          if(type == INT_TYPE){
+                            if(temp_type) emet((yyvsp[-3].st).value_data.ident.lexema, &(yyvsp[-1].st),NULL,NULL,NULL);
+                            else emet((yyvsp[-3].st).value_data.ident.lexema,0,&(yyvsp[-1].st),NULL,NULL);
+
+                            (yyvsp[-1].st).value_data.id_type = INT_TYPE;
+                            
+                          } else if(type == FLOAT_TYPE){
+                            if(temp_type) emet((yyvsp[-3].st).value_data.ident.lexema, &(yyvsp[-1].st),NULL,NULL,NULL);
+                            else emet((yyvsp[-3].st).value_data.ident.lexema,0,&(yyvsp[-1].st),NULL,NULL);
+
+                            (yyvsp[-1].st).value_data.id_type = FLOAT_TYPE;
+
+                          }else if (type == MATRIX_TYPE){
+                              yyerror("Aun no está implementado");
+                              (yyvsp[-1].st).value_data.id_type = MATRIX_TYPE;
+                          } else yyerror("In this compiler we only work with Integers, Floats or Matrix/Vectors.");
+
+                          sym_enter((yyvsp[-3].st).value_data.ident.lexema, &(yyvsp[-1].st));
+                        }
+#line 1511 "exemple.tab.c"
     break;
 
   case 16:
-#line 129 "exemple.y"
-                              { div_op(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
-#line 1492 "exemple.tab.c"
+#line 154 "exemple.y"
+                                         { 
+
+                          type valueType;
+                          
+                        
+                          if((yyvsp[-1].st).value_type = TMP_TYPE){
+                            valueType = (yyvsp[-1].st).value_data.tmp_val;
+                          } else valueType = (yyvsp[-1].st).value_type;
+
+                          sym_value_type add_param;
+                          add_param.value_type = INT_TYPE;
+                          add_param.value_data.enter = 1;
+                          
+                          if(valueType == INT_TYPE){
+                            emet(NULL,0,NULL,"PARAM",&(yyvsp[-1].st));
+                            emet(NULL,0,NULL,"PUTI",&add_param);
+
+                          } else if(valueType == FLOAT_TYPE){
+                            emet(NULL,0,NULL,"PARAM",&(yyvsp[-1].st));
+                            emet(NULL,0,NULL,"PUTF",&add_param);
+                            
+                          } else yyerror("In this compiler we only work with Integers, Floats or Matrix/Vectors."); 
+                        }
+#line 1539 "exemple.tab.c"
     break;
 
   case 17:
-#line 130 "exemple.y"
-                              { mod_op(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
-#line 1498 "exemple.tab.c"
+#line 182 "exemple.y"
+                        { (yyval.st).value_type = FLOAT_TYPE; (yyval.st).value_data.real = (yyvsp[0].st.value_data.real);  }
+#line 1545 "exemple.tab.c"
+    break;
+
+  case 18:
+#line 183 "exemple.y"
+                        { (yyval.st).value_type = INT_TYPE; (yyval.st).value_data.enter = (yyvsp[0].st.value_data.enter); }
+#line 1551 "exemple.tab.c"
     break;
 
   case 19:
-#line 133 "exemple.y"
-                            { pow_op(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
-#line 1504 "exemple.tab.c"
+#line 186 "exemple.y"
+                                { row_value(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
+#line 1557 "exemple.tab.c"
+    break;
+
+  case 20:
+#line 187 "exemple.y"
+                                { (yyval.st).value_data.row = 1; }
+#line 1563 "exemple.tab.c"
     break;
 
   case 21:
-#line 136 "exemple.y"
-                                             { (yyval.st).value_type = FLOAT_TYPE; (yyval.st).value_data.real = (yyvsp[0].st.value_data.real); }
-#line 1510 "exemple.tab.c"
+#line 189 "exemple.y"
+                                { col_value(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
+#line 1569 "exemple.tab.c"
     break;
 
   case 22:
-#line 137 "exemple.y"
-                                             { (yyval.st).value_type = INT_TYPE; (yyval.st).value_data.enter = (yyvsp[0].st.value_data.enter); }
-#line 1516 "exemple.tab.c"
+#line 190 "exemple.y"
+                                { col_ini(&(yyval.st), (yyvsp[0].st));}
+#line 1575 "exemple.tab.c"
     break;
 
   case 23:
-#line 138 "exemple.y"
-                                             { (yyval.st).value_type = STRING_TYPE; (yyval.st).value_data.ident.lexema = (yyvsp[0].st.value_data.ident).lexema; }
-#line 1522 "exemple.tab.c"
+#line 192 "exemple.y"
+                                { sum_op(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
+#line 1581 "exemple.tab.c"
     break;
 
   case 24:
-#line 139 "exemple.y"
-                                             { (yyval.st) = (yyvsp[-1].st); }
-#line 1528 "exemple.tab.c"
-    break;
-
-  case 25:
-#line 140 "exemple.y"
-                                             { if(sym_lookup((yyvsp[0].st.value_data.ident).lexema, &(yyval.st)) == SYMTAB_NOT_FOUND) yyerror("Var doesn't exit"); }
-#line 1534 "exemple.tab.c"
+#line 193 "exemple.y"
+                                { rest_op(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
+#line 1587 "exemple.tab.c"
     break;
 
   case 26:
-#line 141 "exemple.y"
-                                             { (yyval.st) = (yyvsp[-1].st); }
-#line 1540 "exemple.tab.c"
+#line 196 "exemple.y"
+                              { mul_op(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
+#line 1593 "exemple.tab.c"
     break;
 
   case 27:
-#line 142 "exemple.y"
-                                             { acces_vector(&(yyval.st), (yyvsp[-3].st.value_data.ident).lexema, (yyvsp[-1].st)); }
-#line 1546 "exemple.tab.c"
+#line 197 "exemple.y"
+                              { div_op(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
+#line 1599 "exemple.tab.c"
     break;
 
   case 28:
-#line 143 "exemple.y"
-                                             { acces_matrix(&(yyval.st), (yyvsp[-5].st.value_data.ident).lexema, (yyvsp[-3].st), (yyvsp[-1].st)); }
-#line 1552 "exemple.tab.c"
+#line 198 "exemple.y"
+                              { mod_op(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
+#line 1605 "exemple.tab.c"
     break;
 
-  case 29:
-#line 144 "exemple.y"
-                                             { div_op(&(yyval.st),(yyvsp[-3].st),(yyvsp[-1].st)); }
-#line 1558 "exemple.tab.c"
+  case 30:
+#line 201 "exemple.y"
+                            { pow_op(&(yyval.st),(yyvsp[-2].st),(yyvsp[0].st)); }
+#line 1611 "exemple.tab.c"
+    break;
+
+  case 32:
+#line 204 "exemple.y"
+                                             { (yyval.st).value_type = FLOAT_TYPE; (yyval.st).value_data.real = (yyvsp[0].st.value_data.real); }
+#line 1617 "exemple.tab.c"
+    break;
+
+  case 33:
+#line 205 "exemple.y"
+                                             { (yyval.st).value_type = INT_TYPE; (yyval.st).value_data.enter = (yyvsp[0].st.value_data.enter); }
+#line 1623 "exemple.tab.c"
+    break;
+
+  case 34:
+#line 206 "exemple.y"
+                                             { (yyval.st) = (yyvsp[-1].st); }
+#line 1629 "exemple.tab.c"
+    break;
+
+  case 35:
+#line 207 "exemple.y"
+                                             { if(sym_lookup((yyvsp[0].st).value_data.ident.lexema, &(yyval.st)) == SYMTAB_NOT_FOUND) yyerror("Var doesn't exit"); }
+#line 1635 "exemple.tab.c"
+    break;
+
+  case 36:
+#line 208 "exemple.y"
+                                             { (yyval.st) = (yyvsp[-1].st); }
+#line 1641 "exemple.tab.c"
+    break;
+
+  case 37:
+#line 209 "exemple.y"
+                                             { acces_vector(&(yyval.st), (yyvsp[-3].st).value_data.ident.lexema, (yyvsp[-1].st)); }
+#line 1647 "exemple.tab.c"
+    break;
+
+  case 38:
+#line 210 "exemple.y"
+                                             { acces_matrix(&(yyval.st), (yyvsp[-5].st).value_data.ident.lexema, (yyvsp[-3].st), (yyvsp[-1].st)); }
+#line 1653 "exemple.tab.c"
+    break;
+
+  case 39:
+#line 211 "exemple.y"
+                                             {
+                                                if(sym_lookup((yyvsp[-3].st).value_data.ident.lexema, &(yyval.st)) == SYMTAB_NOT_FOUND) yyerror("Var doesn't exit");
+                                                if((yyval.st).value_type == FUNCTION){
+                                                  if((yyval.st).value_data.cont_params < (yyvsp[-1].st).value_data.cont_params) yyerror("Too much parameters.");
+                                                  if((yyval.st).value_data.cont_params > (yyvsp[-1].st).value_data.cont_params) yyerror("Not enought parameters.");
+                                                  emet(NULL,0,NULL,"CALL",&(yyval.st));
+
+                                                }else yyerror("Only work with function type");
+      }
+#line 1667 "exemple.tab.c"
+    break;
+
+  case 40:
+#line 221 "exemple.y"
+                                            { emet(NULL,0,NULL,"PARAM",&(yyvsp[0].st)); (yyval.st).value_data.cont_params+= 1;}
+#line 1673 "exemple.tab.c"
+    break;
+
+  case 41:
+#line 222 "exemple.y"
+                                            { emet(NULL,0,NULL,"PARAM",&(yyvsp[0].st)); (yyval.st).value_data.cont_params = 1;}
+#line 1679 "exemple.tab.c"
+    break;
+
+  case 42:
+#line 223 "exemple.y"
+                                            { (yyval.st).value_data.cont_params = 0;}
+#line 1685 "exemple.tab.c"
     break;
 
 
-#line 1562 "exemple.tab.c"
+#line 1689 "exemple.tab.c"
 
       default: break;
     }
@@ -1790,5 +1917,5 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 146 "exemple.y"
+#line 226 "exemple.y"
 
