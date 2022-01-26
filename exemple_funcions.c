@@ -931,10 +931,6 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
       }
 
     } 
-
-    sprintf(buffer, "%03ld: $t%ld := %s %s %s", ln_inst, tmp, v1_buff, op, v2_buff);
-    instructions_buffer[ln_inst-1] = buffer;
-    ln_inst++;
     
   }else {
     /* en el caso en que Var == NULL, significará que solo tendremos un operando, es por eso que solo tenemos en cuenta V1.*/
@@ -945,9 +941,11 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
         sprintf(buffer, "%03ld: %s:= %ld",ln_inst,var,v1->value_data.enter);
       else if (v1->value_type == FLOAT_TYPE)
         sprintf(buffer, "%03ld: %s:= %f",ln_inst,var,v1->value_data.float);
-
   }
 
+  sprintf(buffer, "%03ld: $t%ld := %s %s %s", ln_inst, tmp, v1_buff, op, v2_buff);
+  instructions_buffer[ln_inst-1] = buffer;
+  ln_inst++;
 }
 
 /* Función para tratar los parametros de las funciones */

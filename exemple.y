@@ -64,6 +64,7 @@ unsigned long tmp_cnt = 0;
 %type main
 %type function
 %type sentences_list
+%type start
 
 
 
@@ -71,24 +72,48 @@ unsigned long tmp_cnt = 0;
 
 %%
 
-programa : function_declaration main
+programa : function_declaration main {
+                                      emet(NULL,0,NULL,"HALT",NULL);
+                                      emet(NULL,0,NULL,"END",NULL);
 
-function_declaration : function_declaration function
+                                      for(int i=0; i<ln_inst-1; i++){
+                                        fprintf(yyout,"%s\n",instructions_buffer[i]);
+                                        free(instructions_buffer[i]);
+                                      }
+}
 
-function : FUNC func_header ENDLINE sentences_list END ENDLINE
+function_declaration : function_declaration function {
+                                                      for(int i=0; i<ln_inst-1; i++){
+                                                        fprintf(yyout,"%s\n",instructions_buffer[i]);
+                                                        free(instructions_buffer[i]);
+                                                      }
+                                                      ln_inst = 1;
+                                                      tmp_cnt = 0;                                                 
+                                                     }
+
+function : FUNC func_header ENDLINE sentences_list END ENDLINE {
+                                                                emet(NULL,0,NULL,"END\n",NULL);
+                                                                pop_scope();
+                                                               }
+
+
 
 parameters : parameters COMMA ID DDP ID   { $$.value_data.cont_params += 1; treat_parameter(&$$, $3, $5); }
-           | ID DDP ID                    { push_scope(); $$.value_data.cont_params = 1; treat_parameter(&$$, $1, $3); }
-           |                              { push_scope(); $$.value_data.cont_params = 0;}
+           | ID DDP ID                    { $$.value_data.cont_params = 1; treat_parameter(&$$, $1, $3); }
+           |                              { $$.value_data.cont_params = 0; }
             
 
 func_header : ID OP parameters CP {
-
                                     emet(NULL,0,NULL,"START",&$1);
                                     $1.value_type = FUNCTION; /* El valor tipo de ID es FUNCTION */
+                                    $1.value_data.cont_params = $3.value_data.cont_params;
                                     sym_enter($1.value_data.ident.lexema, &$1);
-
+                                    push_scope();
                                   }
+
+main : start sentences_list
+
+start : { emet(NULL, 0, NULL, "START main", NULL); }                               
 
 
 expressio_aritmetica : ID ASSIGN sumrest ENDLINE  {
