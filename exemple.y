@@ -77,10 +77,17 @@ function_declaration : function_declaration function
 
 function : FUNC func_header ENDLINE sentences_list END ENDLINE
 
+parameters : parameters COMMA ID DDP ID   { $$.value_data.cont_params += 1; treat_parameter(&$$, $3, $5); }
+           | ID DDP ID                    { push_scope(); $$.value_data.cont_params = 1; treat_parameter(&$$, $1, $3); }
+           |                              { push_scope(); $$.value_data.cont_params = 0;}
+            
+
 func_header : ID OP parameters CP {
+
                                     emet(NULL,0,NULL,"START",&$1);
                                     $1.value_type = FUNCTION; /* El valor tipo de ID es FUNCTION */
                                     sym_enter($1.value_data.ident.lexema, &$1);
+
                                   }
 
 

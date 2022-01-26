@@ -949,3 +949,23 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
   }
 
 }
+
+/* Función para tratar los parametros de las funciones */
+void treat_parameter(sym_value_type * val, sym_value_type v1, sym_value_type val_type){
+
+  if(strcmp(val_type.value_data.ident.lexema, "Int32") == 0)
+    v1.value_type = INT_TYPE;
+  else if(strcmp(val_type.value_data.ident.lexema, "Float32") == 0)
+    v1.value_type = FLOAT_TYPE;
+  else if(strcmp(val_type.value_data.ident.lexema, "Vector{Int32}") == 0){
+    v1.value_type = MATRIX_TYPE;
+    v1.value_data.matrix_type = INT_TYPE;
+  }else if(strcmp(val_type.value_data.ident.lexema, "Vector{Float32}") == 0){
+    v1.value_type = MATRIX_TYPE;
+    v1.value_data.matrix_type = FLOAT_TYPE;
+  } else yyerror('Incorrect Parameter Type.');
+
+  /* Guardamos en la tabla de simbolos el valor de ID*/
+  sym_enter(v1.value_data.ident.lexema, &v1);
+  
+}
