@@ -47,11 +47,12 @@ extern int yydebug;
 #line 27 "exemple.y"
 
   /* Les definicions que s'utilitzen al %union han d'estar aqui */
+  #include "symtab.h"
   #include "exemple_dades.h"
   #include "exemple_funcions.h"
-  #include "symtab.h"
+  
 
-#line 55 "exemple.tab.h"
+#line 56 "exemple.tab.h"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -89,11 +90,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 34 "exemple.y"
+#line 35 "exemple.y"
 
   sym_value_type st;
 
-#line 97 "exemple.tab.h"
+#line 98 "exemple.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

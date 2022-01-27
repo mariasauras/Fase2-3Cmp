@@ -963,3 +963,12 @@ void treat_parameter(sym_value_type * val, sym_value_type v1, sym_value_type val
   sym_enter(v1.value_data.ident.lexema, &v1);
 
 }
+
+void push_scope(){
+  if(sym_push_scope() != SYMTAB_OK) yyerror("Error in push");
+}
+
+
+void pop_scope(){
+  if(sym_pop_scope() != SYMTAB_OK) yyerror("Error in pop");
+}

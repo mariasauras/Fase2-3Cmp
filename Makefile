@@ -34,9 +34,10 @@ EG_OUT = ex_sortida.txt
 
 SYM_TAB = symtab.o
 
+
 ######################################################################
 
-all : yacc lex $(SYM_TAB)
+all : yacc lex $(SYM_TAB) 
 	$(CC) -o $(BIN) $(CFLAGS) $(SRC) $(SRC_EXTRA) $(YACC_OUT_C) $(LEX_OUT) $(SYM_TAB) $(LIB) 
 
 yacc : $(SRC_YACC)
@@ -46,7 +47,7 @@ lex : $(SRC_LEX)
 	$(LEX) $(LFLAGS) $(SRC_LEX)
 
 $(SYM_TAB): symtab.c symtab.h 
-	gcc -c symtab.c 
+	gcc -c symtab.c
 
 clean :
 	rm -f *~ $(BIN) $(OBJ) $(YACC_OUT) $(LEX_OUT) $(OTHERS) $(EG_OUT)

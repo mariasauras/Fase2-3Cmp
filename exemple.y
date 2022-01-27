@@ -26,9 +26,10 @@ unsigned long tmp_cnt = 0;
 
 %code requires {
   /* Les definicions que s'utilitzen al %union han d'estar aqui */
+  #include "symtab.h"
   #include "exemple_dades.h"
   #include "exemple_funcions.h"
-  #include "symtab.h"
+  
 }
 
 %union{
@@ -95,7 +96,7 @@ function_declaration : function_declaration function {
 function : FUNC func_header ENDLINE sentences_list END ENDLINE {
                                                                 emet(NULL,0,NULL,"END\n",NULL);
                                                                 sym_enter($2.value_data.ident.lexema, &$2);
-                                                                if(sym_pop_scope() != SYMTAB_OK) yyerror("Error in pop");
+                                                                pop_scope();
                                                                }
 
 
@@ -112,7 +113,7 @@ func_header : ID push OP parameters CP {
                                     $$ = $1;
                                   }
 
-push : { sym_push_scope(); }
+push : { push_scope(); }
 
 main : start_program sentences_list
 
@@ -127,7 +128,7 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                           type type;
                           bool temp_type = false;
 
-                          if($1.value_type = TMP_TYPE){
+                          if($1.value_type == TMP_TYPE){
                             type = $1.value_data.tmp_val;
                             temp_type = true;
                           } else type = $1.value_type;
@@ -156,7 +157,7 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                           type valueType;
                           
                         
-                          if($1.value_type = TMP_TYPE){
+                          if($1.value_type == TMP_TYPE){
                             valueType = $1.value_data.tmp_val;
                           } else valueType = $1.value_type;
 

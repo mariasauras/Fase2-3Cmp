@@ -77,6 +77,8 @@
 
     void treat_parameter(sym_value_type * val, sym_value_type v1, sym_value_type v2);
 
+    void push_scope();
 
+    void pop_scope();
 
 #endif
