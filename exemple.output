@@ -5,14 +5,6 @@ Terminals unused in grammar
     RETURN
 
 
-Rules useless in parser due to conflicts
-
-   40 func_call: sumrest
-
-
-State 43 conflicts: 2 shift/reduce
-
-
 Grammar
 
     0 $accept: programa $end
@@ -70,7 +62,7 @@ Grammar
    35      | OC matrix CC
    36      | ID OC sumrest CC
    37      | ID OC sumrest COMMA sumrest CC
-   38      | ID OC func_call CC
+   38      | ID OP func_call CP
 
    39 func_call: func_call COMMA sumrest
    40          | sumrest
@@ -93,10 +85,10 @@ Terminals, with rules where they appear
     DIV (267) 26
     MOD (268) 27
     POW (269) 29
-    OP (270) 8 33
-    CP (271) 8 33
-    OC (272) 35 36 37 38
-    CC (273) 35 36 37 38
+    OP (270) 8 33 38
+    CP (271) 8 33 38
+    OC (272) 35 36 37
+    CC (273) 35 36 37
     PC (274) 18
     SPACE (275) 20
     COMMA (276) 5 37 39
@@ -275,10 +267,11 @@ State 11
    34 valor: ID .
    36      | ID . OC sumrest CC
    37      | ID . OC sumrest COMMA sumrest CC
-   38      | ID . OC func_call CC
+   38      | ID . OP func_call CP
 
     ASSIGN  shift, and go to state 23
-    OC      shift, and go to state 24
+    OP      shift, and go to state 24
+    OC      shift, and go to state 25
 
     $default  reduce using rule 34 (valor)
 
@@ -295,12 +288,12 @@ State 13
    33 valor: OP . sumrest CP
 
     INTEGER  shift, and go to state 10
-    ID       shift, and go to state 25
+    ID       shift, and go to state 26
     FLOAT    shift, and go to state 12
     OP       shift, and go to state 13
     OC       shift, and go to state 14
 
-    sumrest  go to state 26
+    sumrest  go to state 27
     mullist  go to state 18
     powlist  go to state 19
     valor    go to state 20
@@ -310,12 +303,12 @@ State 14
 
    35 valor: OC . matrix CC
 
-    INTEGER  shift, and go to state 27
-    FLOAT    shift, and go to state 28
+    INTEGER  shift, and go to state 28
+    FLOAT    shift, and go to state 29
 
-    matrix_value  go to state 29
-    matrix        go to state 30
-    row           go to state 31
+    matrix_value  go to state 30
+    matrix        go to state 31
+    row           go to state 32
 
 
 State 15
@@ -331,7 +324,7 @@ State 15
 
     $default  reduce using rule 10 (main)
 
-    sentence  go to state 32
+    sentence  go to state 33
     sumrest   go to state 17
     mullist   go to state 18
     powlist   go to state 19
@@ -351,9 +344,9 @@ State 17
    22 sumrest: sumrest . SUMA mullist
    23        | sumrest . RESTA mullist
 
-    ENDLINE  shift, and go to state 33
-    SUMA     shift, and go to state 34
-    RESTA    shift, and go to state 35
+    ENDLINE  shift, and go to state 34
+    SUMA     shift, and go to state 35
+    RESTA    shift, and go to state 36
 
 
 State 18
@@ -363,9 +356,9 @@ State 18
    26        | mullist . DIV powlist
    27        | mullist . MOD powlist
 
-    MUL  shift, and go to state 36
-    DIV  shift, and go to state 37
-    MOD  shift, and go to state 38
+    MUL  shift, and go to state 37
+    DIV  shift, and go to state 38
+    MOD  shift, and go to state 39
 
     $default  reduce using rule 24 (sumrest)
 
@@ -375,7 +368,7 @@ State 19
    28 mullist: powlist .
    29 powlist: powlist . POW valor
 
-    POW  shift, and go to state 39
+    POW  shift, and go to state 40
 
     $default  reduce using rule 28 (mullist)
 
@@ -391,7 +384,7 @@ State 21
 
     8 func_header: ID push . OP parameters CP
 
-    OP  shift, and go to state 40
+    OP  shift, and go to state 41
 
 
 State 22
@@ -404,7 +397,7 @@ State 22
     OP       shift, and go to state 13
     OC       shift, and go to state 14
 
-    sentences_list  go to state 41
+    sentences_list  go to state 42
     sentence        go to state 16
     sumrest         go to state 17
     mullist         go to state 18
@@ -417,12 +410,12 @@ State 23
    14 sentence: ID ASSIGN . sumrest ENDLINE
 
     INTEGER  shift, and go to state 10
-    ID       shift, and go to state 25
+    ID       shift, and go to state 26
     FLOAT    shift, and go to state 12
     OP       shift, and go to state 13
     OC       shift, and go to state 14
 
-    sumrest  go to state 42
+    sumrest  go to state 43
     mullist  go to state 18
     powlist  go to state 19
     valor    go to state 20
@@ -430,166 +423,154 @@ State 23
 
 State 24
 
-   36 valor: ID OC . sumrest CC
-   37      | ID OC . sumrest COMMA sumrest CC
-   38      | ID OC . func_call CC
+   38 valor: ID OP . func_call CP
 
     INTEGER  shift, and go to state 10
-    ID       shift, and go to state 25
+    ID       shift, and go to state 26
     FLOAT    shift, and go to state 12
     OP       shift, and go to state 13
     OC       shift, and go to state 14
 
     $default  reduce using rule 41 (func_call)
 
-    sumrest    go to state 43
+    sumrest    go to state 44
     mullist    go to state 18
     powlist    go to state 19
     valor      go to state 20
-    func_call  go to state 44
+    func_call  go to state 45
 
 
 State 25
 
+   36 valor: ID OC . sumrest CC
+   37      | ID OC . sumrest COMMA sumrest CC
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 26
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    sumrest  go to state 46
+    mullist  go to state 18
+    powlist  go to state 19
+    valor    go to state 20
+
+
+State 26
+
    34 valor: ID .
    36      | ID . OC sumrest CC
    37      | ID . OC sumrest COMMA sumrest CC
-   38      | ID . OC func_call CC
+   38      | ID . OP func_call CP
 
-    OC  shift, and go to state 24
+    OP  shift, and go to state 24
+    OC  shift, and go to state 25
 
     $default  reduce using rule 34 (valor)
 
 
-State 26
+State 27
 
    22 sumrest: sumrest . SUMA mullist
    23        | sumrest . RESTA mullist
    33 valor: OP sumrest . CP
 
-    SUMA   shift, and go to state 34
-    RESTA  shift, and go to state 35
-    CP     shift, and go to state 45
+    SUMA   shift, and go to state 35
+    RESTA  shift, and go to state 36
+    CP     shift, and go to state 47
 
 
-State 27
+State 28
 
    17 matrix_value: INTEGER .
 
     $default  reduce using rule 17 (matrix_value)
 
 
-State 28
+State 29
 
    16 matrix_value: FLOAT .
 
     $default  reduce using rule 16 (matrix_value)
 
 
-State 29
+State 30
 
    21 row: matrix_value .
 
     $default  reduce using rule 21 (row)
 
 
-State 30
+State 31
 
    18 matrix: matrix . PC row
    35 valor: OC matrix . CC
 
-    CC  shift, and go to state 46
-    PC  shift, and go to state 47
+    CC  shift, and go to state 48
+    PC  shift, and go to state 49
 
 
-State 31
+State 32
 
    19 matrix: row .
    20 row: row . SPACE matrix_value
 
-    SPACE  shift, and go to state 48
+    SPACE  shift, and go to state 50
 
     $default  reduce using rule 19 (matrix)
 
 
-State 32
+State 33
 
    12 sentences_list: sentences_list sentence .
 
     $default  reduce using rule 12 (sentences_list)
 
 
-State 33
+State 34
 
    15 sentence: sumrest ENDLINE .
 
     $default  reduce using rule 15 (sentence)
 
 
-State 34
+State 35
 
    22 sumrest: sumrest SUMA . mullist
 
     INTEGER  shift, and go to state 10
-    ID       shift, and go to state 25
+    ID       shift, and go to state 26
     FLOAT    shift, and go to state 12
     OP       shift, and go to state 13
     OC       shift, and go to state 14
 
-    mullist  go to state 49
-    powlist  go to state 19
-    valor    go to state 20
-
-
-State 35
-
-   23 sumrest: sumrest RESTA . mullist
-
-    INTEGER  shift, and go to state 10
-    ID       shift, and go to state 25
-    FLOAT    shift, and go to state 12
-    OP       shift, and go to state 13
-    OC       shift, and go to state 14
-
-    mullist  go to state 50
+    mullist  go to state 51
     powlist  go to state 19
     valor    go to state 20
 
 
 State 36
 
-   25 mullist: mullist MUL . powlist
+   23 sumrest: sumrest RESTA . mullist
 
     INTEGER  shift, and go to state 10
-    ID       shift, and go to state 25
+    ID       shift, and go to state 26
     FLOAT    shift, and go to state 12
     OP       shift, and go to state 13
     OC       shift, and go to state 14
 
-    powlist  go to state 51
+    mullist  go to state 52
+    powlist  go to state 19
     valor    go to state 20
 
 
 State 37
 
-   26 mullist: mullist DIV . powlist
+   25 mullist: mullist MUL . powlist
 
     INTEGER  shift, and go to state 10
-    ID       shift, and go to state 25
-    FLOAT    shift, and go to state 12
-    OP       shift, and go to state 13
-    OC       shift, and go to state 14
-
-    powlist  go to state 52
-    valor    go to state 20
-
-
-State 38
-
-   27 mullist: mullist MOD . powlist
-
-    INTEGER  shift, and go to state 10
-    ID       shift, and go to state 25
+    ID       shift, and go to state 26
     FLOAT    shift, and go to state 12
     OP       shift, and go to state 13
     OC       shift, and go to state 14
@@ -598,31 +579,59 @@ State 38
     valor    go to state 20
 
 
-State 39
+State 38
 
-   29 powlist: powlist POW . valor
+   26 mullist: mullist DIV . powlist
 
     INTEGER  shift, and go to state 10
-    ID       shift, and go to state 25
+    ID       shift, and go to state 26
     FLOAT    shift, and go to state 12
     OP       shift, and go to state 13
     OC       shift, and go to state 14
 
-    valor  go to state 54
+    powlist  go to state 54
+    valor    go to state 20
+
+
+State 39
+
+   27 mullist: mullist MOD . powlist
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 26
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    powlist  go to state 55
+    valor    go to state 20
 
 
 State 40
 
-    8 func_header: ID push OP . parameters CP
+   29 powlist: powlist POW . valor
 
-    ID  shift, and go to state 55
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 26
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
 
-    $default  reduce using rule 7 (parameters)
-
-    parameters  go to state 56
+    valor  go to state 56
 
 
 State 41
+
+    8 func_header: ID push OP . parameters CP
+
+    ID  shift, and go to state 57
+
+    $default  reduce using rule 7 (parameters)
+
+    parameters  go to state 58
+
+
+State 42
 
     4 function: FUNC func_header ENDLINE sentences_list . END ENDLINE
    12 sentences_list: sentences_list . sentence
@@ -632,208 +641,193 @@ State 41
     FLOAT    shift, and go to state 12
     OP       shift, and go to state 13
     OC       shift, and go to state 14
-    END      shift, and go to state 57
+    END      shift, and go to state 59
 
-    sentence  go to state 32
+    sentence  go to state 33
     sumrest   go to state 17
     mullist   go to state 18
     powlist   go to state 19
     valor     go to state 20
 
 
-State 42
+State 43
 
    14 sentence: ID ASSIGN sumrest . ENDLINE
    22 sumrest: sumrest . SUMA mullist
    23        | sumrest . RESTA mullist
 
-    ENDLINE  shift, and go to state 58
-    SUMA     shift, and go to state 34
-    RESTA    shift, and go to state 35
+    ENDLINE  shift, and go to state 60
+    SUMA     shift, and go to state 35
+    RESTA    shift, and go to state 36
 
 
-State 43
+State 44
+
+   22 sumrest: sumrest . SUMA mullist
+   23        | sumrest . RESTA mullist
+   40 func_call: sumrest .
+
+    SUMA   shift, and go to state 35
+    RESTA  shift, and go to state 36
+
+    $default  reduce using rule 40 (func_call)
+
+
+State 45
+
+   38 valor: ID OP func_call . CP
+   39 func_call: func_call . COMMA sumrest
+
+    CP     shift, and go to state 61
+    COMMA  shift, and go to state 62
+
+
+State 46
 
    22 sumrest: sumrest . SUMA mullist
    23        | sumrest . RESTA mullist
    36 valor: ID OC sumrest . CC
    37      | ID OC sumrest . COMMA sumrest CC
-   40 func_call: sumrest .
 
-    SUMA   shift, and go to state 34
-    RESTA  shift, and go to state 35
-    CC     shift, and go to state 59
-    COMMA  shift, and go to state 60
-
-    CC     [reduce using rule 40 (func_call)]
-    COMMA  [reduce using rule 40 (func_call)]
+    SUMA   shift, and go to state 35
+    RESTA  shift, and go to state 36
+    CC     shift, and go to state 63
+    COMMA  shift, and go to state 64
 
 
-State 44
-
-   38 valor: ID OC func_call . CC
-   39 func_call: func_call . COMMA sumrest
-
-    CC     shift, and go to state 61
-    COMMA  shift, and go to state 62
-
-
-State 45
+State 47
 
    33 valor: OP sumrest CP .
 
     $default  reduce using rule 33 (valor)
 
 
-State 46
+State 48
 
    35 valor: OC matrix CC .
 
     $default  reduce using rule 35 (valor)
 
 
-State 47
+State 49
 
    18 matrix: matrix PC . row
 
-    INTEGER  shift, and go to state 27
-    FLOAT    shift, and go to state 28
+    INTEGER  shift, and go to state 28
+    FLOAT    shift, and go to state 29
 
-    matrix_value  go to state 29
-    row           go to state 63
+    matrix_value  go to state 30
+    row           go to state 65
 
 
-State 48
+State 50
 
    20 row: row SPACE . matrix_value
 
-    INTEGER  shift, and go to state 27
-    FLOAT    shift, and go to state 28
+    INTEGER  shift, and go to state 28
+    FLOAT    shift, and go to state 29
 
-    matrix_value  go to state 64
+    matrix_value  go to state 66
 
 
-State 49
+State 51
 
    22 sumrest: sumrest SUMA mullist .
    25 mullist: mullist . MUL powlist
    26        | mullist . DIV powlist
    27        | mullist . MOD powlist
 
-    MUL  shift, and go to state 36
-    DIV  shift, and go to state 37
-    MOD  shift, and go to state 38
+    MUL  shift, and go to state 37
+    DIV  shift, and go to state 38
+    MOD  shift, and go to state 39
 
     $default  reduce using rule 22 (sumrest)
 
 
-State 50
+State 52
 
    23 sumrest: sumrest RESTA mullist .
    25 mullist: mullist . MUL powlist
    26        | mullist . DIV powlist
    27        | mullist . MOD powlist
 
-    MUL  shift, and go to state 36
-    DIV  shift, and go to state 37
-    MOD  shift, and go to state 38
+    MUL  shift, and go to state 37
+    DIV  shift, and go to state 38
+    MOD  shift, and go to state 39
 
     $default  reduce using rule 23 (sumrest)
 
 
-State 51
+State 53
 
    25 mullist: mullist MUL powlist .
    29 powlist: powlist . POW valor
 
-    POW  shift, and go to state 39
+    POW  shift, and go to state 40
 
     $default  reduce using rule 25 (mullist)
 
 
-State 52
+State 54
 
    26 mullist: mullist DIV powlist .
    29 powlist: powlist . POW valor
 
-    POW  shift, and go to state 39
+    POW  shift, and go to state 40
 
     $default  reduce using rule 26 (mullist)
 
 
-State 53
+State 55
 
    27 mullist: mullist MOD powlist .
    29 powlist: powlist . POW valor
 
-    POW  shift, and go to state 39
+    POW  shift, and go to state 40
 
     $default  reduce using rule 27 (mullist)
 
 
-State 54
+State 56
 
    29 powlist: powlist POW valor .
 
     $default  reduce using rule 29 (powlist)
 
 
-State 55
+State 57
 
     6 parameters: ID . DDP ID
 
-    DDP  shift, and go to state 65
+    DDP  shift, and go to state 67
 
 
-State 56
+State 58
 
     5 parameters: parameters . COMMA ID DDP ID
     8 func_header: ID push OP parameters . CP
 
-    CP     shift, and go to state 66
-    COMMA  shift, and go to state 67
+    CP     shift, and go to state 68
+    COMMA  shift, and go to state 69
 
 
-State 57
+State 59
 
     4 function: FUNC func_header ENDLINE sentences_list END . ENDLINE
 
-    ENDLINE  shift, and go to state 68
+    ENDLINE  shift, and go to state 70
 
 
-State 58
+State 60
 
    14 sentence: ID ASSIGN sumrest ENDLINE .
 
     $default  reduce using rule 14 (sentence)
 
 
-State 59
-
-   36 valor: ID OC sumrest CC .
-
-    $default  reduce using rule 36 (valor)
-
-
-State 60
-
-   37 valor: ID OC sumrest COMMA . sumrest CC
-
-    INTEGER  shift, and go to state 10
-    ID       shift, and go to state 25
-    FLOAT    shift, and go to state 12
-    OP       shift, and go to state 13
-    OC       shift, and go to state 14
-
-    sumrest  go to state 69
-    mullist  go to state 18
-    powlist  go to state 19
-    valor    go to state 20
-
-
 State 61
 
-   38 valor: ID OC func_call CC .
+   38 valor: ID OP func_call CP .
 
     $default  reduce using rule 38 (valor)
 
@@ -843,12 +837,12 @@ State 62
    39 func_call: func_call COMMA . sumrest
 
     INTEGER  shift, and go to state 10
-    ID       shift, and go to state 25
+    ID       shift, and go to state 26
     FLOAT    shift, and go to state 12
     OP       shift, and go to state 13
     OC       shift, and go to state 14
 
-    sumrest  go to state 70
+    sumrest  go to state 71
     mullist  go to state 18
     powlist  go to state 19
     valor    go to state 20
@@ -856,101 +850,124 @@ State 62
 
 State 63
 
+   36 valor: ID OC sumrest CC .
+
+    $default  reduce using rule 36 (valor)
+
+
+State 64
+
+   37 valor: ID OC sumrest COMMA . sumrest CC
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 26
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    sumrest  go to state 72
+    mullist  go to state 18
+    powlist  go to state 19
+    valor    go to state 20
+
+
+State 65
+
    18 matrix: matrix PC row .
    20 row: row . SPACE matrix_value
 
-    SPACE  shift, and go to state 48
+    SPACE  shift, and go to state 50
 
     $default  reduce using rule 18 (matrix)
 
 
-State 64
+State 66
 
    20 row: row SPACE matrix_value .
 
     $default  reduce using rule 20 (row)
 
 
-State 65
+State 67
 
     6 parameters: ID DDP . ID
 
-    ID  shift, and go to state 71
+    ID  shift, and go to state 73
 
 
-State 66
+State 68
 
     8 func_header: ID push OP parameters CP .
 
     $default  reduce using rule 8 (func_header)
 
 
-State 67
+State 69
 
     5 parameters: parameters COMMA . ID DDP ID
 
-    ID  shift, and go to state 72
+    ID  shift, and go to state 74
 
 
-State 68
+State 70
 
     4 function: FUNC func_header ENDLINE sentences_list END ENDLINE .
 
     $default  reduce using rule 4 (function)
 
 
-State 69
-
-   22 sumrest: sumrest . SUMA mullist
-   23        | sumrest . RESTA mullist
-   37 valor: ID OC sumrest COMMA sumrest . CC
-
-    SUMA   shift, and go to state 34
-    RESTA  shift, and go to state 35
-    CC     shift, and go to state 73
-
-
-State 70
+State 71
 
    22 sumrest: sumrest . SUMA mullist
    23        | sumrest . RESTA mullist
    39 func_call: func_call COMMA sumrest .
 
-    SUMA   shift, and go to state 34
-    RESTA  shift, and go to state 35
+    SUMA   shift, and go to state 35
+    RESTA  shift, and go to state 36
 
     $default  reduce using rule 39 (func_call)
 
 
-State 71
+State 72
+
+   22 sumrest: sumrest . SUMA mullist
+   23        | sumrest . RESTA mullist
+   37 valor: ID OC sumrest COMMA sumrest . CC
+
+    SUMA   shift, and go to state 35
+    RESTA  shift, and go to state 36
+    CC     shift, and go to state 75
+
+
+State 73
 
     6 parameters: ID DDP ID .
 
     $default  reduce using rule 6 (parameters)
 
 
-State 72
+State 74
 
     5 parameters: parameters COMMA ID . DDP ID
 
-    DDP  shift, and go to state 74
+    DDP  shift, and go to state 76
 
 
-State 73
+State 75
 
    37 valor: ID OC sumrest COMMA sumrest CC .
 
     $default  reduce using rule 37 (valor)
 
 
-State 74
+State 76
 
     5 parameters: parameters COMMA ID DDP . ID
 
-    ID  shift, and go to state 75
+    ID  shift, and go to state 77
 
 
-State 75
+State 77
 
     5 parameters: parameters COMMA ID DDP ID .
 

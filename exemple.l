@@ -35,6 +35,15 @@ comment ([#][^\n\"\']* | [#=][^\"\']*[=#])
 
 "div"                      { return FP_D; }
 
+"::"                        { return DDP; }
+
+"return"                    { return RETURN; }
+
+"end"                       { return END; }
+
+"function"                  { return FUNC; }
+
+
 {lletra}({lletra}|{digit})*_*({lletra}|{digit})* {
                               yylval.st.value_data.ident.lexema = strdup(yytext);
                               yylval.st.value_data.ident.lenght = yyleng;
@@ -43,14 +52,6 @@ comment ([#][^\n\"\']* | [#=][^\"\']*[=#])
                               return ID;
                             }
                             
-
-"::"                        { return DDP; }
-
-"return"                    { return RETURN; }
-
-"end"                       { return END; }
-
-"function"                  { return FUNC; }
 
 "("                         { return OP; }
 

@@ -897,6 +897,11 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
   char* buffer = malloc(MAX_INS*sizeof(char));
   char v1_buff[MAX_INS], v2_buff[MAX_INS];
 
+  for(int i=0;i< MAX_INS; i++){
+    v1_buff[i]=0;
+    v2_buff[i]=0;
+  }
+
   
   if (var == NULL){
 
@@ -926,6 +931,11 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
         sprintf(v2_buff, "%s", v2->value_data.ident.lexema);
       }
 
+      /*if ( tmp != 0)
+        sprintf(buffer, "%03ld: $t%ld := %s %s %s", ln_inst, tmp, v1_buff, op, v2_buff);
+      else
+        sprintf(buffer, "%03ld: %s %s %s", ln_inst, v1_buff, op, v2_buff);*/
+
     } 
     
   }else {
@@ -939,7 +949,8 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
         sprintf(buffer, "%03ld: %s:= %f",ln_inst,var,v1->value_data.real);
   }
 
-  sprintf(buffer, "%03ld: $t%ld := %s %s %s", ln_inst, tmp, v1_buff, op, v2_buff);
+  
+
   instructions_buffer[ln_inst-1] = buffer;
   ln_inst++;
 }

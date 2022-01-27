@@ -95,8 +95,8 @@ function_declaration : function_declaration function {
 
 function : FUNC func_header ENDLINE sentences_list END ENDLINE {
                                                                 emet(NULL,0,NULL,"END\n",NULL);
-                                                                sym_enter($2.value_data.ident.lexema, &$2);
                                                                 pop_scope();
+                                                                sym_enter($2.value_data.ident.lexema, &$2);
                                                                }
 
 
@@ -128,19 +128,19 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                           type type;
                           bool temp_type = false;
 
-                          if($1.value_type == TMP_TYPE){
-                            type = $1.value_data.tmp_val;
+                          if($3.value_type == TMP_TYPE){
+                            type = $3.value_data.tmp_val;
                             temp_type = true;
-                          } else type = $1.value_type;
+                          } else type = $3.value_type;
 
                           if(type == INT_TYPE){
-                            if(temp_type) emet($1.value_data.ident.lexema, &$3,NULL,NULL,NULL);
+                            if(temp_type) emet($1.value_data.ident.lexema,type,NULL,NULL,NULL);
                             else emet($1.value_data.ident.lexema,0,&$3,NULL,NULL);
 
                             $3.value_data.id_type = INT_TYPE;
                             
                           } else if(type == FLOAT_TYPE){
-                            if(temp_type) emet($1.value_data.ident.lexema, &$3,NULL,NULL,NULL);
+                            if(temp_type) emet($1.value_data.ident.lexema,type,NULL,NULL,NULL);
                             else emet($1.value_data.ident.lexema,0,&$3,NULL,NULL);
 
                             $3.value_data.id_type = FLOAT_TYPE;
@@ -148,14 +148,18 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                           }else if (type == MATRIX_TYPE){
                               yyerror("Aun no está implementado");
                               $3.value_data.id_type = MATRIX_TYPE;
-                          } else yyerror("In this compiler we only work with Integers, Floats or Matrix/Vectors.");
 
+                          } else if (type == FUNCTION){
+                            $3.value_data.id_type = FUNCTION;
+
+                          } else yyerror("elol.");
+
+                          $3.value_type = ID_TYPE;
                           sym_enter($1.value_data.ident.lexema, &$3);
                         }
                       | sumrest ENDLINE  { 
 
-                          type valueType;
-                          
+                          type valueType;                     
                         
                           if($1.value_type == TMP_TYPE){
                             valueType = $1.value_data.tmp_val;
@@ -167,13 +171,23 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                           
                           if(valueType == INT_TYPE){
                             emet(NULL,0,NULL,"PARAM",&$1);
-                            emet(NULL,0,NULL,"PUTI",&add_param);
+                            emet(NULL,0,NULL,"PUTI,",&add_param);
 
                           } else if(valueType == FLOAT_TYPE){
                             emet(NULL,0,NULL,"PARAM",&$1);
-                            emet(NULL,0,NULL,"PUTF",&add_param);
+                            emet(NULL,0,NULL,"PUTF,",&add_param);
                             
-                          } else yyerror("In this compiler we only work with Integers, Floats or Matrix/Vectors."); 
+                          } else if(valueType == FUNCTION){
+                            $1.value_data.id_type = FUNCTION;
+                            
+                          } else if(valueType == ID_TYPE){
+                            emet(NULL,0,NULL,"PARAM",&$1);
+                            if($1.value_data.id_type == INT_TYPE)
+                              emet(NULL,0,NULL,"PUTI,",&add_param);
+                            else
+                              emet(NULL,0,NULL,"PUTF,",&add_param);
+                            
+                          } else yyerror("AQUI HAY UN ERROR"); 
                         }
 
 
@@ -209,18 +223,20 @@ valor : FLOAT                                { $$.value_type = FLOAT_TYPE; $$.va
       | OC matrix CC                         { $$ = $2; }
       | ID OC sumrest CC                     { acces_vector(&$$, $1.value_data.ident.lexema, $3); }
       | ID OC sumrest COMMA sumrest CC       { acces_matrix(&$$, $1.value_data.ident.lexema, $3, $5); } 
-      | ID OC func_call CC                   {
+      | ID OP func_call CP                   {
                                                 if(sym_lookup($1.value_data.ident.lexema, &$$) == SYMTAB_NOT_FOUND) yyerror("Var doesn't exit");
                                                 if($$.value_type == FUNCTION){
+
                                                   if($$.value_data.cont_params < $3.value_data.cont_params) yyerror("Too much parameters.");
-                                                  if($$.value_data.cont_params > $3.value_data.cont_params) yyerror("Not enought parameters.");
+                                                  if($$.value_data.cont_params > $3.value_data.cont_params) yyerror("Not enough parameters.");
+                                                  $$.value_type = ID_TYPE;
                                                   emet(NULL,0,NULL,"CALL",&$$);
 
                                                 }else yyerror("Only work with function type");
       }
 
-func_call : func_call COMMA sumrest         { emet(NULL,0,NULL,"PARAM",&$3); $$.value_data.cont_params+= 1;} 
-          | sumrest                         { emet(NULL,0,NULL,"PARAM",&$1); $$.value_data.cont_params = 1;} 
+func_call : func_call COMMA sumrest         { $$.value_data.cont_params+= 1; emet(NULL,0,NULL,"PARAM",&$3);} 
+          | sumrest                         { $$.value_data.cont_params = 1; emet(NULL,0,NULL,"PARAM",&$1);} 
           |                                 { $$.value_data.cont_params = 0;}                
                
 
