@@ -111,9 +111,9 @@ parameters : parameters COMMA ID DDP ID   { $$.value_data.cont_params += 1; trea
 func_header : ID push OP parameters CP func_return {
                                     if($6.value_data.return_type != UNKNOWN_TYPE)
                                       treat_return(&$1, $6);
-                                    else
+                                    else 
                                       $1.value_data.return_type = UNKNOWN_TYPE;
-
+                                    
                                     emet(NULL,0,NULL,"START",&$1);
                                     $1.value_type = FUNCTION; /* El valor tipo de ID es FUNCTION */
                                     $1.value_data.cont_params = $4.value_data.cont_params;
@@ -240,10 +240,8 @@ valor : FLOAT                                { $$.value_type = FLOAT_TYPE; $$.va
 
                                                   if($$.value_data.cont_params < $3.value_data.cont_params) yyerror("Too much parameters.");
                                                   if($$.value_data.cont_params > $3.value_data.cont_params) yyerror("Not enough parameters.");
-                                                  $$.value_type = ID_TYPE;
-                                                  
+
                                                   if($$.value_data.return_type != UNKNOWN_TYPE){
-                                                    fprintf(stderr,"jaja %d",$$.value_data.return_type);
                                                     $$.value_data.tmp_type = $$.value_data.return_type;
                                                     long tmp = getTmp();
                                                     emet(NULL,tmp,NULL,"CALL",&$$);
@@ -255,9 +253,9 @@ valor : FLOAT                                { $$.value_type = FLOAT_TYPE; $$.va
                                                 }else yyerror("Only work with function type");
       }
 
-func_call : func_call COMMA sumrest         { $$.value_data.cont_params+= 1; emet(NULL,0,NULL,"PARAM",&$3);} 
-          | sumrest                         { $$.value_data.cont_params = 1; emet(NULL,0,NULL,"PARAM",&$1);} 
-          |                                 { $$.value_data.cont_params = 0;}                
+func_call : func_call COMMA sumrest         { $$.value_data.cont_params+= 1; emet(NULL,0,NULL,"PARAM",&$3); } 
+          | sumrest                         { $$.value_data.cont_params = 1; emet(NULL,0,NULL,"PARAM",&$1); } 
+          |                                 { $$.value_data.cont_params = 0; }                
                
 
 %%

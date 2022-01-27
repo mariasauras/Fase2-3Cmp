@@ -561,7 +561,7 @@ static const yytype_int16 yyrline[] =
      122,   124,   125,   127,   129,   131,   132,   135,   170,   202,
      208,   209,   212,   213,   215,   216,   218,   219,   220,   222,
      223,   224,   225,   227,   228,   230,   231,   232,   233,   234,
-     235,   236,   237,   258,   259,   260
+     235,   236,   237,   257,   258,   259
 };
 #endif
 
@@ -1463,9 +1463,9 @@ yyreduce:
                                                    {
                                     if((yyvsp[0].st).value_data.return_type != UNKNOWN_TYPE)
                                       treat_return(&(yyvsp[-5].st), (yyvsp[0].st));
-                                    else
+                                    else 
                                       (yyvsp[-5].st).value_data.return_type = UNKNOWN_TYPE;
-
+                                    
                                     emet(NULL,0,NULL,"START",&(yyvsp[-5].st));
                                     (yyvsp[-5].st).value_type = FUNCTION; /* El valor tipo de ID es FUNCTION */
                                     (yyvsp[-5].st).value_data.cont_params = (yyvsp[-2].st).value_data.cont_params;
@@ -1703,43 +1703,42 @@ yyreduce:
 
                                                   if((yyval.st).value_data.cont_params < (yyvsp[-1].st).value_data.cont_params) yyerror("Too much parameters.");
                                                   if((yyval.st).value_data.cont_params > (yyvsp[-1].st).value_data.cont_params) yyerror("Not enough parameters.");
-                                                  (yyval.st).value_type = ID_TYPE;
-                                                  
+
                                                   if((yyval.st).value_data.return_type != UNKNOWN_TYPE){
-                                                    fprintf(stderr,"jaja %d",(yyval.st).value_data.return_type);
                                                     (yyval.st).value_data.tmp_type = (yyval.st).value_data.return_type;
                                                     long tmp = getTmp();
                                                     emet(NULL,tmp,NULL,"CALL",&(yyval.st));
                                                     (yyval.st).value_data.tmp_val = tmp;
                                                     (yyval.st).value_type = TMP_TYPE;
                                                   }else{
+                                                    
                                                     emet(NULL,0,NULL,"CALL",&(yyval.st));
                                                   }
                                                 }else yyerror("Only work with function type");
       }
-#line 1721 "exemple.tab.c"
+#line 1720 "exemple.tab.c"
     break;
 
   case 43:
-#line 258 "exemple.y"
+#line 257 "exemple.y"
                                             { (yyval.st).value_data.cont_params+= 1; emet(NULL,0,NULL,"PARAM",&(yyvsp[0].st));}
-#line 1727 "exemple.tab.c"
+#line 1726 "exemple.tab.c"
     break;
 
   case 44:
-#line 259 "exemple.y"
+#line 258 "exemple.y"
                                             { (yyval.st).value_data.cont_params = 1; emet(NULL,0,NULL,"PARAM",&(yyvsp[0].st));}
-#line 1733 "exemple.tab.c"
+#line 1732 "exemple.tab.c"
     break;
 
   case 45:
-#line 260 "exemple.y"
+#line 259 "exemple.y"
                                             { (yyval.st).value_data.cont_params = 0;}
-#line 1739 "exemple.tab.c"
+#line 1738 "exemple.tab.c"
     break;
 
 
-#line 1743 "exemple.tab.c"
+#line 1742 "exemple.tab.c"
 
       default: break;
     }
@@ -1971,5 +1970,5 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 263 "exemple.y"
+#line 262 "exemple.y"
 

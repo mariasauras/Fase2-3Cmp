@@ -1,4 +1,4 @@
-function sum(a::Float32)
+function sum(a::Float32)::Float32
    c = a+2*3
 end
-sum(5)
+k = sum(5) * 5

@@ -928,7 +928,10 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
         sprintf(v1_buff, "$t%ld", v1->value_data.tmp_val);
       } else if(v1->value_type == ID_TYPE){
         sprintf(v1_buff, "%s", v1->value_data.ident.lexema);
+      }else if(v1->value_type == FUNCTION){
+        sprintf(v1_buff, "%s", v1->value_data.ident.lexema);
       }
+      
 
     }
 
@@ -946,6 +949,8 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
       }else if(v2->value_type == TMP_TYPE){
         sprintf(v2_buff, "$t%ld", v2->value_data.tmp_val);
       } else if(v2->value_type == ID_TYPE){
+        sprintf(v2_buff, "%s", v2->value_data.ident.lexema);
+      } else if(v2->value_type == FUNCTION){
         sprintf(v2_buff, "%s", v2->value_data.ident.lexema);
       }
     } 
