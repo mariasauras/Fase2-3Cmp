@@ -106,7 +106,7 @@ parameters : parameters COMMA ID DDP ID   { $$.value_data.cont_params += 1; trea
            |                              { $$.value_data.cont_params = 0; }
             
 
-func_header : ID push OP parameters CP {
+func_header : ID push OP parameters CP{
                                     emet(NULL,0,NULL,"START",&$1);
                                     $1.value_type = FUNCTION; /* El valor tipo de ID es FUNCTION */
                                     $1.value_data.cont_params = $4.value_data.cont_params;
@@ -153,7 +153,10 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                           } else if (type == FUNCTION){
                             $3.value_data.id_type = FUNCTION;
 
-                          } else yyerror("Error.");
+                          } else{
+                            fprintf(stderr,"%d\n", $3.value_type);
+                            yyerror("Error.");
+                          } 
 
                           $3.value_type = ID_TYPE;
                           sym_enter($1.value_data.ident.lexema, &$3);

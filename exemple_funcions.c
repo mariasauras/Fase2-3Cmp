@@ -115,6 +115,8 @@ void sum_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     unsigned long tmp;
     char sum_buffer[10];
     sprintf(sum_buffer,"%s","ADDF");
+    (*val).value_data.tmp_type= FLOAT_TYPE;
+
   
     /* Tipo de valor de las variables x e y*/
     getType(&x,&y,v1,v2);
@@ -132,9 +134,12 @@ void sum_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
       v1.value_type = TMP_TYPE;
       v1.value_data.tmp_val = tmp;
 
-    } else if(x == INT_TYPE && y == INT_TYPE)
+    } else if(x == INT_TYPE && y == INT_TYPE){
       sprintf(sum_buffer,"%s","ADDI");
+      (*val).value_data.tmp_type = INT_TYPE;
+    }
       
+
      else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
        yyerror("Can't operate with these values");
     
@@ -170,6 +175,7 @@ void rest_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     unsigned long tmp;
     char sum_buffer[10];
     sprintf(sum_buffer,"%s","SUBF");
+    (*val).value_data.tmp_type= FLOAT_TYPE;
   
     /* Tipo de valor de las variables x e y*/
     getType(&x,&y,v1,v2);
@@ -187,10 +193,10 @@ void rest_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
       v1.value_type = TMP_TYPE;
       v1.value_data.tmp_val = tmp;
 
-    } else if(x == INT_TYPE && y == INT_TYPE)
+    } else if(x == INT_TYPE && y == INT_TYPE){
+      (*val).value_data.tmp_type= INT_TYPE;
       sprintf(sum_buffer,"%s","SUBI");
-
-      else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
+    } else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
        yyerror("Can't operate with these values");
     
     
@@ -225,6 +231,8 @@ void mul_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     unsigned long tmp;
     char sum_buffer[10];
     sprintf(sum_buffer,"%s","MULF");
+     (*val).value_data.tmp_type= FLOAT_TYPE;
+    
   
     /* Tipo de valor de las variables x e y*/
     getType(&x,&y,v1,v2);
@@ -242,10 +250,11 @@ void mul_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
       v1.value_type = TMP_TYPE;
       v1.value_data.tmp_val = tmp;
 
-    } else if(x == INT_TYPE && y == INT_TYPE)
+    } else if(x == INT_TYPE && y == INT_TYPE){
       sprintf(sum_buffer,"%s","MULI");
+      (*val).value_data.tmp_type= INT_TYPE;
 
-      else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
+    } else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
        yyerror("Can't operate with these values");
     
     
@@ -280,6 +289,7 @@ void div_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     unsigned long tmp;
     char sum_buffer[10];
     sprintf(sum_buffer,"%s","DIVF");
+     (*val).value_data.tmp_type= FLOAT_TYPE;
   
     /* Tipo de valor de las variables x e y*/
     getType(&x,&y,v1,v2);
@@ -297,10 +307,11 @@ void div_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
       v1.value_type = TMP_TYPE;
       v1.value_data.tmp_val = tmp;
 
-    } else if(x == INT_TYPE && y == INT_TYPE)
+    } else if(x == INT_TYPE && y == INT_TYPE){
+      (*val).value_data.tmp_type= INT_TYPE;
       sprintf(sum_buffer,"%s","DIVI");
 
-      else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
+    } else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
        yyerror("Can't operate with these values");
     
     
@@ -324,6 +335,7 @@ void mod_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     unsigned long tmp;
     char mod_buffer[10];
     sprintf(mod_buffer,"%s","MOD");
+    (*val).value_data.tmp_type= FLOAT_TYPE;
   
     /* Tipo de valor de las variables x e y*/
     getType(&x,&y,v1,v2);
@@ -334,6 +346,7 @@ void mod_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
       tmp = getTmp();
       emet(NULL, tmp, &v1, mod_buffer, &v2);
       (*val).value_type = TMP_TYPE;
+       (*val).value_data.tmp_type= INT_TYPE;
       (*val).value_data.tmp_val = tmp;
 
     } else yyerror("Can't operate with these type of values.");
@@ -364,6 +377,7 @@ void pow_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     unsigned long tmp;
     char sum_buffer[10];
     sprintf(sum_buffer,"%s","POWF");
+     (*val).value_data.tmp_type= FLOAT_TYPE;
   
     /* Tipo de valor de las variables x e y*/
     getType(&x,&y,v1,v2);
@@ -381,10 +395,11 @@ void pow_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
       v1.value_type = TMP_TYPE;
       v1.value_data.tmp_val = tmp;
 
-    } else if(x == INT_TYPE && y == INT_TYPE)
+    } else if(x == INT_TYPE && y == INT_TYPE){
+       (*val).value_data.tmp_type= INT_TYPE;
       sprintf(sum_buffer,"%s","POWI");
 
-      else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
+    } else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
        yyerror("Can't operate with these values");
     
     
@@ -910,7 +925,7 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
       } else if(v1->value_type == FLOAT_TYPE){
         sprintf(v1_buff, "%f", v1->value_data.real);
       }else if(v1->value_type == TMP_TYPE){
-        sprintf(v1_buff, "%ld", v1->value_data.tmp_val);
+        sprintf(v1_buff, "$t%ld", v1->value_data.tmp_val);
       } else if(v1->value_type == ID_TYPE){
         sprintf(v1_buff, "%s", v1->value_data.ident.lexema);
       }
@@ -929,7 +944,7 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
       } else if(v2->value_type == FLOAT_TYPE){
         sprintf(v2_buff, "%f", v2->value_data.real);
       }else if(v2->value_type == TMP_TYPE){
-        sprintf(v2_buff, "%ld", v2->value_data.tmp_val);
+        sprintf(v2_buff, "$t%ld", v2->value_data.tmp_val);
       } else if(v2->value_type == ID_TYPE){
         sprintf(v2_buff, "%s", v2->value_data.ident.lexema);
       }

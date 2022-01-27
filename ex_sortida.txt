@@ -1,0 +1,11 @@
+001: START  
+002: $t1 := a MOD 2
+003: $t2 := $t1 MULI 3
+004: c:= $t2
+005: END
+ 
+001: START main 
+002: PARAM 5 
+003: PUTI, 1 
+004: HALT 
+005: END 
