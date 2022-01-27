@@ -50,6 +50,7 @@ typedef struct data{
 	type matrix_type;
 	type tmp_type;
 	type id_type;
+	type return_type;
 }data;
 
 typedef struct sym_value_type {

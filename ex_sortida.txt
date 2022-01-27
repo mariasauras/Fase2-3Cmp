@@ -1,11 +1,14 @@
 001: START  
-002: $t1 := a MOD 2
-003: $t2 := $t1 MULI 3
+002: $t1 := I2F 6 
+003: $t2 := a ADDF $t1
 004: c:= $t2
-005: END
+005: RETURN 
+006: END
  
 001: START main 
 002: PARAM 5 
-003: PUTI, 1 
-004: HALT 
-005: END 
+003: CALL sum 
+004: PARAM sum 
+005: PUTF, 1 
+006: HALT 
+007: END 

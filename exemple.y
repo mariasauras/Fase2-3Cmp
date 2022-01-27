@@ -60,6 +60,7 @@ unsigned long tmp_cnt = 0;
 %type <st> func_header
 %type <st> parameters
 %type <st> func_call
+%type <st> func_return
 
 
 /* Declarations */
@@ -94,6 +95,7 @@ function_declaration : function_declaration function {
                      |
 
 function : FUNC func_header ENDLINE sentences_list END ENDLINE {
+                                                                emet(NULL,0,NULL,"RETURN",NULL);
                                                                 emet(NULL,0,NULL,"END\n",NULL);
                                                                 pop_scope();
                                                                 sym_enter($2.value_data.ident.lexema, &$2);
@@ -106,14 +108,21 @@ parameters : parameters COMMA ID DDP ID   { $$.value_data.cont_params += 1; trea
            |                              { $$.value_data.cont_params = 0; }
             
 
-func_header : ID push OP parameters CP{
+func_header : ID push OP parameters CP func_return {
+                                    if($6.value_data.return_type != UNKNOWN_TYPE)
+                                      treat_return(&$1, $6);
+                                    else
+                                      $1.value_data.return_type = UNKNOWN_TYPE;
+
                                     emet(NULL,0,NULL,"START",&$1);
                                     $1.value_type = FUNCTION; /* El valor tipo de ID es FUNCTION */
                                     $1.value_data.cont_params = $4.value_data.cont_params;
                                     $$ = $1;
                                   }
-
 push : { push_scope(); }
+
+func_return : DDP ID              { $$ = $2; }
+            |                     { $$.value_data.return_type = UNKNOWN_TYPE; }        
 
 main : start_program sentences_list
 
@@ -153,9 +162,6 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                           } else if (type == FUNCTION){
                             $3.value_data.id_type = FUNCTION;
 
-                          } else{
-                            fprintf(stderr,"%d\n", $3.value_type);
-                            yyerror("Error.");
                           } 
 
                           $3.value_type = ID_TYPE;
@@ -193,6 +199,7 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                             
                           } else yyerror("AQUI HAY UN ERROR"); 
                         }
+                        | RETURN sumrest ENDLINE { emet(NULL,0,NULL,"RETURN",&$2);}
 
 
 /* Priority Hierarchy */
@@ -234,8 +241,17 @@ valor : FLOAT                                { $$.value_type = FLOAT_TYPE; $$.va
                                                   if($$.value_data.cont_params < $3.value_data.cont_params) yyerror("Too much parameters.");
                                                   if($$.value_data.cont_params > $3.value_data.cont_params) yyerror("Not enough parameters.");
                                                   $$.value_type = ID_TYPE;
-                                                  emet(NULL,0,NULL,"CALL",&$$);
-
+                                                  
+                                                  if($$.value_data.return_type != UNKNOWN_TYPE){
+                                                    fprintf(stderr,"jaja %d",$$.value_data.return_type);
+                                                    $$.value_data.tmp_type = $$.value_data.return_type;
+                                                    long tmp = getTmp();
+                                                    emet(NULL,tmp,NULL,"CALL",&$$);
+                                                    $$.value_data.tmp_val = tmp;
+                                                    $$.value_type = TMP_TYPE;
+                                                  }else{
+                                                    emet(NULL,0,NULL,"CALL",&$$);
+                                                  }
                                                 }else yyerror("Only work with function type");
       }
 

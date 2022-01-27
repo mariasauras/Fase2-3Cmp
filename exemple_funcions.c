@@ -1007,6 +1007,24 @@ void treat_parameter(sym_value_type v1, sym_value_type val_type){
 
 }
 
+/* Función para tratar los parametros de las funciones */
+void treat_return(sym_value_type* v1, sym_value_type val_type){
+
+  if(strcmp(val_type.value_data.ident.lexema, "Int32") == 0){
+    (*v1).value_data.id_type = INT_TYPE;
+    (*v1).value_data.return_type = INT_TYPE;
+  } else if(strcmp(val_type.value_data.ident.lexema, "Float32") == 0){
+    (*v1).value_data.id_type = FLOAT_TYPE;
+    (*v1).value_data.return_type = FLOAT_TYPE;
+  } else if(strcmp(val_type.value_data.ident.lexema, "Vector{Int32}") == 0){
+    (*v1).value_data.id_type = MATRIX_TYPE;
+    (*v1).value_data.matrix_type = INT_TYPE;
+  } else if(strcmp(val_type.value_data.ident.lexema, "Vector{Float32}") == 0){
+    (*v1).value_data.id_type = MATRIX_TYPE;
+    (*v1).value_data.matrix_type = FLOAT_TYPE;
+  } else yyerror("Incorrect Parameter Type.");
+}
+
 void push_scope(){
   if(sym_push_scope() != SYMTAB_OK) yyerror("Error in push");
 }

@@ -1,6 +1,4 @@
-function sum(a::Int32)
-    c = a+2*3
-    return c
+function sum(a::Float32)
+   c = a+2*3
 end
-ret = sum(5)
-5
+sum(5)
