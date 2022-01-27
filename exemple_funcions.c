@@ -2,13 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "exemple_funcions.h" 
 #define MAX_INS 50
 
 extern int yyparse();
 extern FILE *yyin;
 extern FILE *yyout;
 extern int yylineno;
-#include "exemple_funcions.h" 
+
 
 extern char* instructions_buffer[1000];
 extern unsigned long ln_inst;
@@ -133,8 +134,8 @@ void sum_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
 
     } else if(x == INT_TYPE && y == INT_TYPE)
       sprintf(sum_buffer,"%s","ADDI");
-
-      else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
+      
+     else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
        yyerror("Can't operate with these values");
     
     
@@ -864,30 +865,29 @@ void dif_op(sym_value_type * dif, sym_value_type v1, sym_value_type v2){
 
 /* Function to calculte temp variable.*/
 unsigned long getTmp(){
-  return tmp_cnt++;
+  tmp_cnt++;
+  return tmp_cnt;
 }
 
 
 /* Función que comprueba el tipo de las variables v1 y v2 y le da valor de tipo a X e Y. */
 void getType(type* x, type* y, sym_value_type v1, sym_value_type v2){
 
-  
-  if(v1.value_type == TMP_TYPE && v2.value_type == TMP_TYPE){
-      (*x) = v1.value_data.tmp_type;
-      (*y) = v2.value_data.tmp_type;
-    } else if(v1.value_type == ID_TYPE && v2.value_type == ID_TYPE){
-      (*x) = v1.value_data.id_type;
-      (*y) = v2.value_data.id_type;
-    } else if(v1.value_type == TMP_TYPE && v2.value_type == ID_TYPE){
-      (*x) = v1.value_data.tmp_type;
-      (*y) = v2.value_data.id_type;
-    } else if(v1.value_type == ID_TYPE && v2.value_type == TMP_TYPE){
-      (*x) = v1.value_data.id_type;
-      (*y) = v2.value_data.tmp_type;
-    }else{
-      (*x) = v1.value_type;
-      (*y) = v2.value_type;
-    }
+  /* CASE V1*/
+  if(v1.value_type == TMP_TYPE)
+    (*x) = v1.value_data.tmp_type;
+  else if (v1.value_type == ID_TYPE)
+    (*x) = v1.value_data.id_type;
+  else 
+    (*x)= v1.value_type;
+
+  /* CASE V2*/
+  if(v2.value_type == TMP_TYPE)
+    (*y) = v2.value_data.tmp_type;
+  else if (v2.value_type == ID_TYPE)
+    (*y) = v2.value_data.id_type;
+  else 
+    (*y)= v2.value_type;
 
 }
 
@@ -895,15 +895,13 @@ void getType(type* x, type* y, sym_value_type v1, sym_value_type v2){
 void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_type* v2){
 
   char* buffer = malloc(MAX_INS*sizeof(char));
-  char v1_buff[MAX_INS], v2_buff[MAX_INS];
-
-  for(int i=0;i< MAX_INS; i++){
-    v1_buff[i]=0;
-    v2_buff[i]=0;
-  }
-
   
   if (var == NULL){
+
+    char v1_buff[MAX_INS];
+
+    for(int i=0;i< MAX_INS; i++)
+      v1_buff[i]=0;
 
     if(v1 != NULL){
 
@@ -919,6 +917,11 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
 
     }
 
+    char v2_buff[MAX_INS];
+
+    for(int i=0; i < MAX_INS; i++)
+      v2_buff[i]=0;
+
     if(v2 != NULL){
 
       if(v2->value_type == INT_TYPE){
@@ -930,16 +933,29 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
       } else if(v2->value_type == ID_TYPE){
         sprintf(v2_buff, "%s", v2->value_data.ident.lexema);
       }
-
-      /*if ( tmp != 0)
-        sprintf(buffer, "%03ld: $t%ld := %s %s %s", ln_inst, tmp, v1_buff, op, v2_buff);
-      else
-        sprintf(buffer, "%03ld: %s %s %s", ln_inst, v1_buff, op, v2_buff);*/
-
     } 
+
+  /* Comprobamos el valor del temporal para hacer el emet*/
+      if (tmp != 0)
+        if(v1 == NULL)
+          sprintf(buffer, "%03ld: $t%ld := %s %s ", ln_inst, tmp, op, v2_buff);
+        else if(v2 == NULL)
+          sprintf(buffer, "%03ld: $t%ld := %s %s ", ln_inst, tmp, v1_buff, op);
+        else
+          sprintf(buffer, "%03ld: $t%ld := %s %s %s", ln_inst, tmp, v1_buff, op, v2_buff);
+      else
+        if(v1 == NULL && v2 == NULL)
+          sprintf(buffer, "%03ld: %s ", ln_inst, op);
+        else if(v1 == NULL)
+          sprintf(buffer, "%03ld: %s %s ", ln_inst, op, v2_buff);
+        else if(v2 == NULL)
+          sprintf(buffer, "%03ld: %s %s ", ln_inst, v1_buff, op);
+        else
+          sprintf(buffer, "%03ld: %s %s %s ", ln_inst, v1_buff, op, v2_buff);
+   
     
   }else {
-    /* en el caso en que Var == NULL, significará que solo tendremos un operando, es por eso que solo tenemos en cuenta V1.*/
+    /* en el caso en que Var != NULL, significará que solo tendremos un operando, es por eso que solo tenemos en cuenta V1.*/
     if(v1 == NULL)
       sprintf(buffer, "%03ld: %s:= $t%ld",ln_inst,var,tmp);
     else
@@ -947,29 +963,30 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
         sprintf(buffer, "%03ld: %s:= %ld",ln_inst,var,v1->value_data.enter);
       else if (v1->value_type == FLOAT_TYPE)
         sprintf(buffer, "%03ld: %s:= %f",ln_inst,var,v1->value_data.real);
+      else if (v1->value_type == TMP_TYPE)
+        sprintf(buffer,"%03ld: %s:= %ld",ln_inst,var,v1->value_data.tmp_val);
   }
-
-  
 
   instructions_buffer[ln_inst-1] = buffer;
   ln_inst++;
 }
 
 /* Función para tratar los parametros de las funciones */
-void treat_parameter(sym_value_type * val, sym_value_type v1, sym_value_type val_type){
+void treat_parameter(sym_value_type v1, sym_value_type val_type){
 
   if(strcmp(val_type.value_data.ident.lexema, "Int32") == 0)
-    v1.value_type = INT_TYPE;
+    v1.value_data.id_type = INT_TYPE;
   else if(strcmp(val_type.value_data.ident.lexema, "Float32") == 0)
-    v1.value_type = FLOAT_TYPE;
+    v1.value_data.id_type = FLOAT_TYPE;
   else if(strcmp(val_type.value_data.ident.lexema, "Vector{Int32}") == 0){
-    v1.value_type = MATRIX_TYPE;
+    v1.value_data.id_type = MATRIX_TYPE;
     v1.value_data.matrix_type = INT_TYPE;
   }else if(strcmp(val_type.value_data.ident.lexema, "Vector{Float32}") == 0){
-    v1.value_type = MATRIX_TYPE;
+    v1.value_data.id_type = MATRIX_TYPE;
     v1.value_data.matrix_type = FLOAT_TYPE;
   } else yyerror("Incorrect Parameter Type.");
 
+  v1.value_type = ID_TYPE;
   /* Guardamos en la tabla de simbolos el valor de ID*/
   sym_enter(v1.value_data.ident.lexema, &v1);
 
@@ -978,7 +995,6 @@ void treat_parameter(sym_value_type * val, sym_value_type v1, sym_value_type val
 void push_scope(){
   if(sym_push_scope() != SYMTAB_OK) yyerror("Error in push");
 }
-
 
 void pop_scope(){
   if(sym_pop_scope() != SYMTAB_OK) yyerror("Error in pop");

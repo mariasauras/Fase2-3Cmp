@@ -101,8 +101,8 @@ function : FUNC func_header ENDLINE sentences_list END ENDLINE {
 
 
 
-parameters : parameters COMMA ID DDP ID   { $$.value_data.cont_params += 1; treat_parameter(&$$,$3,$5); }
-           | ID DDP ID                    { $$.value_data.cont_params = 1; treat_parameter(&$$,$1,$3); }
+parameters : parameters COMMA ID DDP ID   { $$.value_data.cont_params += 1; treat_parameter($3,$5); }
+           | ID DDP ID                    { $$.value_data.cont_params = 1; treat_parameter($1,$3); }
            |                              { $$.value_data.cont_params = 0; }
             
 
@@ -129,18 +129,19 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                           bool temp_type = false;
 
                           if($3.value_type == TMP_TYPE){
-                            type = $3.value_data.tmp_val;
+                            type = $3.value_data.tmp_type;
                             temp_type = true;
                           } else type = $3.value_type;
 
                           if(type == INT_TYPE){
-                            if(temp_type) emet($1.value_data.ident.lexema,type,NULL,NULL,NULL);
+                            if(temp_type)
+                              emet($1.value_data.ident.lexema,$3.value_data.tmp_val,NULL,NULL,NULL);
                             else emet($1.value_data.ident.lexema,0,&$3,NULL,NULL);
 
                             $3.value_data.id_type = INT_TYPE;
                             
                           } else if(type == FLOAT_TYPE){
-                            if(temp_type) emet($1.value_data.ident.lexema,type,NULL,NULL,NULL);
+                            if(temp_type) emet($1.value_data.ident.lexema,$3.value_data.tmp_val,NULL,NULL,NULL);
                             else emet($1.value_data.ident.lexema,0,&$3,NULL,NULL);
 
                             $3.value_data.id_type = FLOAT_TYPE;
@@ -152,7 +153,7 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                           } else if (type == FUNCTION){
                             $3.value_data.id_type = FUNCTION;
 
-                          } else yyerror("elol.");
+                          } else yyerror("Error.");
 
                           $3.value_type = ID_TYPE;
                           sym_enter($1.value_data.ident.lexema, &$3);
@@ -162,7 +163,7 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                           type valueType;                     
                         
                           if($1.value_type == TMP_TYPE){
-                            valueType = $1.value_data.tmp_val;
+                            valueType = $1.value_data.tmp_type;
                           } else valueType = $1.value_type;
 
                           sym_value_type add_param;
