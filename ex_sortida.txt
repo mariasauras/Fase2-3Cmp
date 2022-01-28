@@ -1,11 +1,8 @@
 001: START  
-002: $t1 := 3 MULI b
-003: $t2 := 2 MULI $t1
-004: $t3 := a ADDI $t2
-005: c:= $t3
-006: RETURN a 
-007: RETURN 
-008: END
+002: $t1 := a ADDI b
+003: RETURN $t1 
+004: RETURN 
+005: END
  
 001: START main 
 002: m:= 2

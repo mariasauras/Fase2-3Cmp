@@ -110,6 +110,7 @@ parameters : parameters COMMA ID DDP ID   { $$.value_data.cont_params += 1; trea
             
 
 func_header : ID push OP parameters CP func_return {
+                                    
                                     if($6.value_data.return_type != UNKNOWN_TYPE)
                                       treat_return(&$1, $6);
                                     else 
@@ -119,10 +120,11 @@ func_header : ID push OP parameters CP func_return {
                                     $1.value_type = FUNCTION; /* El valor tipo de ID es FUNCTION */
                                     $1.value_data.cont_params = $4.value_data.cont_params;
                                     $$ = $1;
+                                    
                                   }
 push : { push_scope(); }
 
-func_return : DDP ID              { $$ = $2; }
+func_return : DDP ID              { $$ = $2;}
             |                     { $$.value_data.return_type = UNKNOWN_TYPE; }        
 
 main : start_program sentences_list
@@ -232,8 +234,9 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                             
                           } else yyerror("AQUI HAY UN ERROR"); 
                         }
-                        | RETURN sumrest ENDLINE { emet(NULL,0,NULL,"RETURN",&$2);}
-
+                        | RETURN sumrest ENDLINE {                   
+                           emet(NULL,0,NULL,"RETURN",&$2);
+                          }
 
 /* Priority Hierarchy */
 
