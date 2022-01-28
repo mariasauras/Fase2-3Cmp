@@ -1,15 +1,23 @@
 001: START  
-002: $t1 := I2F 6 
-003: $t2 := a ADDF $t1
-004: c:= $t2
-005: RETURN 
-006: END
+002: $t1 := 3 MULI b
+003: $t2 := 2 MULI $t1
+004: $t3 := a ADDI $t2
+005: c:= $t3
+006: RETURN a 
+007: RETURN 
+008: END
  
 001: START main 
-002: PARAM 5 
-003: $t1 := CALL sum 
-004: $t2 := I2F 5 
-005: $t3 := $t1 MULF $t2
-006: k:= $t3
-007: HALT 
-008: END 
+002: m:= 2
+003: PARAM 5 
+004: PARAM m 
+005: $t1 := CALL sum 
+006: $t2 := $t1 MULI 5
+007: k:= $t2
+008: v[0] := 1 
+009: v[4] := 2 
+010: v[8] := 3 
+011: PARAM 2 
+012: PUTI, 1 
+013: HALT 
+014: END 

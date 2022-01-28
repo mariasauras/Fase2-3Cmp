@@ -488,7 +488,7 @@ void row_value(sym_value_type *matrix, sym_value_type v1, sym_value_type v2){
   (*matrix).value_type = MATRIX_TYPE;
   
   
-  if(v1.value_data.column != v2.value_data.column) yyerror("Error. Incompatibel dimension: Diferent size of columns in matrix");
+  if(v1.value_data.column != v2.value_data.column) yyerror("Error. Incompatible dimension: Different size of columns in matrix");
 
   /* Type of vectors and matrices: 
    1. INT TYPE
@@ -503,7 +503,7 @@ void row_value(sym_value_type *matrix, sym_value_type v1, sym_value_type v2){
     if((*matrix).value_data.integer_matrix  == NULL) yyerror("Error. Can't inicialize heap memory");
 
     /* Copy the content of first row (V1) in the final matrix */
-    for(int i=0; i<v1.value_data.num_elems ; i++) (*matrix).value_data.integer_matrix[i] = v1.value_data.integer_matrix[i];
+    for(int i=0; i<v1.value_data.num_elems; i++) (*matrix).value_data.integer_matrix[i] = v1.value_data.integer_matrix[i];
 
     /* Copy the content of second row (V2) in the final matrix.
         In ths part of the code we treat this if V2 was the second row but not it's not necessarily 
@@ -930,6 +930,10 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
         sprintf(v1_buff, "%s", v1->value_data.ident.lexema);
       }else if(v1->value_type == FUNCTION){
         sprintf(v1_buff, "%s", v1->value_data.ident.lexema);
+      } else if(v1->value_type == MATRIX_TYPE){
+        if(v1->value_data.matrix_type == FLOAT_TYPE){
+          sprintf(v1_buff, "[%ld] = %f",v1->value_data.despl,v1->value_data.float_matrix[v1->value_data.pos]);
+        } else sprintf(v1_buff, "[%ld] = %ld",v1->value_data.despl,v1->value_data.integer_matrix[v1->value_data.pos]); 
       }
       
 
@@ -952,6 +956,10 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
         sprintf(v2_buff, "%s", v2->value_data.ident.lexema);
       } else if(v2->value_type == FUNCTION){
         sprintf(v2_buff, "%s", v2->value_data.ident.lexema);
+      } else if(v2->value_type == MATRIX_TYPE){
+        if(v2->value_data.matrix_type == FLOAT_TYPE){
+          sprintf(v2_buff, "[%ld] = %f",v2->value_data.despl,v2->value_data.float_matrix[v2->value_data.pos]);
+        } else sprintf(v2_buff, "[%ld] = %ld",v2->value_data.despl,v2->value_data.integer_matrix[v2->value_data.pos]); 
       }
     } 
 
@@ -985,6 +993,13 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
         sprintf(buffer, "%03ld: %s:= %f",ln_inst,var,v1->value_data.real);
       else if (v1->value_type == TMP_TYPE)
         sprintf(buffer,"%03ld: %s:= %ld",ln_inst,var,v1->value_data.tmp_val);
+      else if (v1->value_type == MATRIX_TYPE){
+        if(v1->value_data.matrix_type == FLOAT_TYPE)
+          sprintf(buffer,"%03ld: %s[%ld] := %f ",ln_inst,var,v1->value_data.despl,v1->value_data.float_matrix[v1->value_data.pos]);
+        else
+          sprintf(buffer,"%03ld: %s[%ld] := %ld ",ln_inst,var,v1->value_data.despl,v1->value_data.integer_matrix[v1->value_data.pos]);
+      }
+       
   }
 
   instructions_buffer[ln_inst-1] = buffer;

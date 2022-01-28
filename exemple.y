@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "symtab.h"
+#define MAX_NUM 50
 extern FILE *yyout;
 extern int yylineno;
 extern int yylex();
@@ -156,8 +157,40 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                             $3.value_data.id_type = FLOAT_TYPE;
 
                           }else if (type == MATRIX_TYPE){
-                              yyerror("Aun no está implementado");
                               $3.value_data.id_type = MATRIX_TYPE;
+
+                              if($3.value_data.matrix_type == INT_TYPE) {
+                                long despl = 0;
+                                for(int i= 0; i<$3.value_data.row; i++) 
+                                  for(int j= 0; j<$3.value_data.column; j++){
+                                    $3.value_data.pos = $3.value_data.column*i+j;
+                                    $3.value_data.despl = despl;
+                                    if(temp_type){
+                                      char buffer_matrix[50];
+                                      sprintf(buffer_matrix,"$t%ld",$3.value_data.tmp_val);
+                                      emet(buffer_matrix,0,&$3,NULL,NULL);
+
+                                    }else
+                                      emet($1.value_data.ident.lexema,0,&$3,NULL,NULL);
+                                    despl+=4;
+                                  }
+                            } else if($3.value_data.matrix_type == FLOAT_TYPE) {
+                                long despl = 0;
+                                for(int i= 0; i<$3.value_data.row; i++) 
+                                  for(int j= 0; j<$3.value_data.column; j++){
+                                    $3.value_data.pos = $3.value_data.column*i+j;
+                                    $3.value_data.despl = despl;
+                                    if(temp_type){
+                                      char buffer_matrix[50];
+                                      sprintf(buffer_matrix,"$t%ld",$3.value_data.tmp_val);
+                                      emet(buffer_matrix,0,&$3,NULL,NULL);
+
+                                    }else
+                                      emet($1.value_data.ident.lexema,0,&$3,NULL,NULL);
+                                    despl +=4;
+                                  }
+                                  
+                            } else yyerror("Only accept Integer or Float matrix");
 
                           } else if (type == FUNCTION){
                             $3.value_data.id_type = FUNCTION;

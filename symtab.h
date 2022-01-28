@@ -44,6 +44,8 @@ typedef struct data{
 	long *integer_matrix;
 	long row;
 	long column;
+	long pos;
+	long despl;
 	long num_elems;
 	long tmp_val;
 	long cont_params;
