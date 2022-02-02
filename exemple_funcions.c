@@ -586,6 +586,10 @@ void acces_vector(sym_value_type * vector, char * id, sym_value_type valist){
 
     if(auxVector.value_data.id_type != MATRIX_TYPE) yyerror("Var isn't matrix type");
 
+    if((auxVector.value_data.row > 1 && auxVector.value_data.column != 1)
+      || (auxVector.value_data.row != 1 && auxVector.value_data.column > 1)) 
+        yyerror("Error: This is a bidimensional vector. You must use Two indexes"); 
+
     sym_value_type auxiliar;
     auxiliar.value_data.enter = 4;
     auxiliar.value_type = INT_TYPE;
@@ -623,6 +627,9 @@ void acces_matrix(sym_value_type * vector, char * id, sym_value_type v1, sym_val
     if(sym_lookup(id, &auxVector) == SYMTAB_NOT_FOUND) yyerror("Var doesn't exist");
 
     if(auxVector.value_data.id_type != MATRIX_TYPE) yyerror("Var isn't matrix type");
+
+    if((auxVector.value_data.row == 1 || auxVector.value_data.column == 1)) 
+        yyerror("Error: This is a unidimensional vector. You must use one index");
 
     sym_value_type auxiliar;
     auxiliar.value_data.enter = 4;
@@ -940,8 +947,6 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
           sprintf(v1_buff, "[%ld] = %f",v1->value_data.despl,v1->value_data.float_matrix[v1->value_data.pos]);
         } else sprintf(v1_buff, "[%ld] = %ld",v1->value_data.despl,v1->value_data.integer_matrix[v1->value_data.pos]); 
       }
-      
-
     }
 
     char v2_buff[MAX_INS];
@@ -969,25 +974,24 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
     } 
 
   /* Comprobamos el valor del temporal para hacer el emet*/
-      if (tmp != 0)
-        if(v1 == NULL)
-          sprintf(buffer, "%03ld: $t%ld := %s %s ", ln_inst, tmp, op, v2_buff);
-        else if(v2 == NULL)
-          sprintf(buffer, "%03ld: $t%ld := %s %s ", ln_inst, tmp, v1_buff, op);
-        else if (op == NULL)
-          sprintf(buffer, "%03ld: $t%ld := %s[%s]", ln_inst, tmp, v1_buff, v2_buff);
-        else
-          sprintf(buffer, "%03ld: $t%ld := %s %s %s", ln_inst, tmp, v1_buff, op, v2_buff);
+    if (tmp != 0)
+      if(v1 == NULL)
+        sprintf(buffer, "%03ld: $t%ld := %s %s ", ln_inst, tmp, op, v2_buff);
+      else if(v2 == NULL)
+        sprintf(buffer, "%03ld: $t%ld := %s %s ", ln_inst, tmp, v1_buff, op);
+      else if (op == NULL)
+        sprintf(buffer, "%03ld: $t%ld := %s[%s]", ln_inst, tmp, v1_buff, v2_buff);
       else
-        if(v1 == NULL && v2 == NULL)
-          sprintf(buffer, "%03ld: %s ", ln_inst, op);
-        else if(v1 == NULL)
-          sprintf(buffer, "%03ld: %s %s ", ln_inst, op, v2_buff);
-        else if(v2 == NULL)
-          sprintf(buffer, "%03ld: %s %s ", ln_inst, v1_buff, op);
-        else
-          sprintf(buffer, "%03ld: %s %s %s ", ln_inst, v1_buff, op, v2_buff);
-   
+        sprintf(buffer, "%03ld: $t%ld := %s %s %s", ln_inst, tmp, v1_buff, op, v2_buff);
+    else
+      if(v1 == NULL && v2 == NULL)
+        sprintf(buffer, "%03ld: %s ", ln_inst, op);
+      else if(v1 == NULL)
+        sprintf(buffer, "%03ld: %s %s ", ln_inst, op, v2_buff);
+      else if(v2 == NULL)
+        sprintf(buffer, "%03ld: %s %s ", ln_inst, v1_buff, op);
+      else
+        sprintf(buffer, "%03ld: %s %s %s ", ln_inst, v1_buff, op, v2_buff);
     
   }else {
     /* en el caso en que Var != NULL, significará que solo tendremos un operando, es por eso que solo tenemos en cuenta V1.*/

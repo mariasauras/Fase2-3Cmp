@@ -96,7 +96,6 @@ function_declaration : function_declaration function {
                      |
 
 function : FUNC func_header ENDLINE sentences_list END ENDLINE {
-                                                                emet(NULL,0,NULL,"RETURN",NULL);
                                                                 emet(NULL,0,NULL,"END\n",NULL);
                                                                 pop_scope();
                                                                 sym_enter($2.value_data.ident.lexema, &$2);
@@ -196,9 +195,9 @@ sentence : ID ASSIGN sumrest ENDLINE  {
 
                           } else if (type == FUNCTION){
                             $3.value_data.id_type = FUNCTION;
-
                           } 
 
+                          $3.value_data.ident.lexema = $1.value_data.ident.lexema;
                           $3.value_type = ID_TYPE;
                           sym_enter($1.value_data.ident.lexema, &$3);
                         }
