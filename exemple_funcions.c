@@ -577,83 +577,75 @@ void row_value(sym_value_type *matrix, sym_value_type v1, sym_value_type v2){
 /* Function to acces a vector */
 void acces_vector(sym_value_type * vector, char * id, sym_value_type valist){
 
-  if(valist.value_type == INT_TYPE){
+  type t = getTypeV(valist);
+
+  if (t == INT_TYPE){
     
-    long i = valist.value_data.enter;
-    if(i < 0) yyerror("Index out of bounds./n");
+    sym_value_type auxVector;
+    if(sym_lookup(id, &auxVector) == SYMTAB_NOT_FOUND) yyerror("Var doesn't exist");
 
-    if(sym_lookup(id, vector) == SYMTAB_NOT_FOUND) yyerror("Var doesn't exit");
+    if(auxVector.value_data.id_type != MATRIX_TYPE) yyerror("Var isn't matrix type");
 
-    if((*vector).value_data.row == 1 || (*vector).value_data.column == 1){
+    sym_value_type auxiliar;
+    auxiliar.value_data.enter = 4;
+    auxiliar.value_type = INT_TYPE;
+    
+    mul_op(&auxVector,valist,auxiliar);
+    
+    long temp = getTmp();
 
-      /* We look at the case in which the vector consists of a row and several columns */
-      if((*vector).value_data.row == 1){
-        if(i < (*vector).value_data.column){
+    auxiliar.value_data.ident.lexema = id;
+    auxiliar.value_type = ID_TYPE;
 
-          if((*vector).value_data.matrix_type == INT_TYPE){
-            (*vector).value_type = INT_TYPE;
-            (*vector).value_data.enter = (*vector).value_data.integer_matrix[i];
-          } else if((*vector).value_data.matrix_type == FLOAT_TYPE){
-            (*vector).value_type = FLOAT_TYPE;
-            (*vector).value_data.real = (*vector).value_data.float_matrix[i];
-          }else yyerror("Bad value!");
+    emet(NULL, temp, &auxiliar, NULL, &auxVector);
+    (*vector).value_type = TMP_TYPE;
+    (*vector).value_data.tmp_val = temp;
 
-        }else yyerror("Index out of bounds./n");
-      }
+    if((auxVector).value_data.matrix_type == INT_TYPE)
+      (*vector).value_data.tmp_type = INT_TYPE;
+    else
+      (*vector).value_data.tmp_type = FLOAT_TYPE;
 
-      /* We look at the case in which the vector consists of a column and several rows*/
-      if((*vector).value_data.column == 1){
-        if(i < (*vector).value_data.row){
-
-          if((*vector).value_data.matrix_type == INT_TYPE){
-            (*vector).value_type = INT_TYPE;
-            (*vector).value_data.enter = (*vector).value_data.integer_matrix[i];
-          } else if((*vector).value_data.matrix_type == FLOAT_TYPE){
-            (*vector).value_type = FLOAT_TYPE;
-            (*vector).value_data.real = (*vector).value_data.float_matrix[i];
-          }else yyerror("Bad value!");
-
-        } else yyerror("Index out of bounds./n");
-      }
-    } else yyerror("Vectors only have one column or row.");
-
-  } else yyerror("If u want acces to a vector you can only do with a int number.");
-
+  } else yyerror("Integer access must be an integer.");
 }
 
 /* Function to acces a matrix */
-void acces_matrix(sym_value_type * matrix, char * id, sym_value_type v1, sym_value_type v2){
+void acces_matrix(sym_value_type * vector, char * id, sym_value_type v1, sym_value_type v2){
 
-  if(v1.value_type == INT_TYPE && v2.value_type == INT_TYPE){
 
-    long i = v1.value_data.enter;
-    long j = v2.value_data.enter;
-    long pos;
-    if(i < 0 || j < 0) yyerror("Index out of bounds./n");
+  type t = getTypeV(v1);
+  type t2 = getTypeV(v2);
 
-    if(sym_lookup(id, matrix) == SYMTAB_NOT_FOUND) yyerror("Var doesn't exit");
+  if (t == INT_TYPE && t2 == INT_TYPE){
+    
+    sym_value_type auxVector;
+    sym_value_type auxVector2;
+    if(sym_lookup(id, &auxVector) == SYMTAB_NOT_FOUND) yyerror("Var doesn't exist");
 
-    if((*matrix).value_data.row != 1 && (*matrix).value_data.column != 1){
+    if(auxVector.value_data.id_type != MATRIX_TYPE) yyerror("Var isn't matrix type");
 
-      if(i < (*matrix).value_data.row && j < (*matrix).value_data.column){
+    sym_value_type auxiliar;
+    auxiliar.value_data.enter = 4;
+    auxiliar.value_type = INT_TYPE;
+    
+    mul_op(&auxVector,v1,auxiliar);
+    sum_op(&auxVector2,auxVector,v2);
+    
+    long temp = getTmp();
 
-        if((*matrix).value_data.matrix_type == INT_TYPE){
-          pos = (*matrix).value_data.column*i+j;
-          (*matrix).value_type = INT_TYPE;
-          (*matrix).value_data.enter = (*matrix).value_data.integer_matrix[pos];
-        } else if((*matrix).value_data.matrix_type == FLOAT_TYPE) {
-          pos = (*matrix).value_data.column*i+j;
-          (*matrix).value_type = FLOAT_TYPE;
-          (*matrix).value_data.real = (*matrix).value_data.float_matrix[pos];
-        } else yyerror("Bad value!");
+    auxiliar.value_data.ident.lexema = id;
+    auxiliar.value_type = ID_TYPE;
 
-      }else yyerror("Index out of bounds./n");
+    emet(NULL, temp, &auxiliar, NULL, &auxVector2);
+    (*vector).value_type = TMP_TYPE;
+    (*vector).value_data.tmp_val = temp;
 
-    }else yyerror("Matrix have more than one row and column. ");
+    if((auxVector).value_data.matrix_type == INT_TYPE)
+      (*vector).value_data.tmp_type = INT_TYPE;
+    else
+      (*vector).value_data.tmp_type = FLOAT_TYPE;
 
-  }else yyerror("If u want acces to a vector you can only do with a int number.");
-
-  
+  } else yyerror("Integer access must be an integer.");
 }
 
 /**********************************************************************/
@@ -906,6 +898,19 @@ void getType(type* x, type* y, sym_value_type v1, sym_value_type v2){
 
 }
 
+type getTypeV(sym_value_type v1){
+
+  /* CASE V1*/
+  if(v1.value_type == TMP_TYPE)
+    return v1.value_data.tmp_type;
+  else if (v1.value_type == ID_TYPE)
+    return v1.value_data.id_type;
+  else 
+    return v1.value_type;
+
+
+}
+
 /* La función emet genera la instrucción. */
 void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_type* v2){
 
@@ -969,6 +974,8 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
           sprintf(buffer, "%03ld: $t%ld := %s %s ", ln_inst, tmp, op, v2_buff);
         else if(v2 == NULL)
           sprintf(buffer, "%03ld: $t%ld := %s %s ", ln_inst, tmp, v1_buff, op);
+        else if (op == NULL)
+          sprintf(buffer, "%03ld: $t%ld := %s[%s]", ln_inst, tmp, v1_buff, v2_buff);
         else
           sprintf(buffer, "%03ld: $t%ld := %s %s %s", ln_inst, tmp, v1_buff, op, v2_buff);
       else
@@ -998,8 +1005,7 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
           sprintf(buffer,"%03ld: %s[%ld] := %f ",ln_inst,var,v1->value_data.despl,v1->value_data.float_matrix[v1->value_data.pos]);
         else
           sprintf(buffer,"%03ld: %s[%ld] := %ld ",ln_inst,var,v1->value_data.despl,v1->value_data.integer_matrix[v1->value_data.pos]);
-      }
-       
+      }  
   }
 
   instructions_buffer[ln_inst-1] = buffer;

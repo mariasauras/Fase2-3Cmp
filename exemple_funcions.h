@@ -41,7 +41,7 @@
 
     void acces_vector(sym_value_type * vector, char * id, sym_value_type valist);
 
-    void acces_matrix(sym_value_type * matrix, char * id, sym_value_type v1, sym_value_type v2);
+    void acces_matrix(sym_value_type * vector, char * id, sym_value_type v1, sym_value_type v2);
 
     /**********************************************************************/
     /*                 BOOLEAN & RELATIONAL FUNCTIONS                     */
@@ -78,6 +78,8 @@
     void treat_parameter(sym_value_type v1, sym_value_type v2);
 
     void treat_return(sym_value_type* v1, sym_value_type val_type);
+
+    type getTypeV(sym_value_type v1);
 
     void push_scope();
 

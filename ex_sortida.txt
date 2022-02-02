@@ -4,6 +4,14 @@
 004: RETURN 
 005: END
  
+001: START  
+002: $t1 := a ADDF b
+003: $t2 := I2F 2 
+004: $t3 := $t1 DIVF $t2
+005: RETURN $t3 
+006: RETURN 
+007: END
+ 
 001: START main 
 002: m:= 2
 003: PARAM 5 
@@ -11,10 +19,32 @@
 005: $t1 := CALL sum 
 006: $t2 := $t1 MULI 5
 007: k:= $t2
-008: v[0] := 1 
-009: v[4] := 2 
-010: v[8] := 3 
-011: PARAM 2 
-012: PUTI, 1 
-013: HALT 
-014: END 
+008: matrix[0] := 1 
+009: matrix[4] := 4 
+010: matrix[8] := 2 
+011: matrix[12] := 5 
+012: matrix[16] := 3 
+013: matrix[20] := 5 
+014: $t3 := m MULI 4
+015: $t4 := $t3 ADDI m
+016: $t5 := matrix[$t4]
+017: PARAM $t5 
+018: PUTI, 1 
+019: vector[0] := 1 
+020: vector[4] := 4 
+021: vector[8] := 3 
+022: $t6 := vector[4]
+023: PARAM $t6 
+024: PUTI, 1 
+025: x:= 17.000000
+026: $t7 := I2F 7 
+027: $t8 := x SUBF $t7
+028: PARAM $t8 
+029: $t9 := vector[4]
+030: $t10 := $t9 MULI 2
+031: PARAM $t10 
+032: $t11 := CALL mean 
+033: $t12 := x ADDF $t11
+034: z:= $t12
+035: HALT 
+036: END 
