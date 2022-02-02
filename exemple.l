@@ -25,7 +25,7 @@
 
 %S MATRIX
 
-lletra  [a-zA-Z]
+lletra  [a-zA-Z{}]
 digit   [0-9]
 float   {digit}+"."{digit}*("e-"{digit}+)? 
 text    ["][^_\n\t\"\']*["] 
