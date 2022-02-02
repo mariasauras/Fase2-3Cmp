@@ -1,0 +1,1785 @@
+Terminals unused in grammar
+
+    STRING
+    BOOLEAN
+    FOR
+    IN
+
+
+Grammar
+
+    0 $accept: programa $end
+
+    1 programa: function_declaration main
+
+    2 function_declaration: function_declaration function
+    3                     | %empty
+
+    4 function: FUNC func_header ENDLINE sentences_list END ENDLINE
+
+    5 parameters: parameters COMMA ID DDP ID
+    6           | ID DDP ID
+    7           | %empty
+
+    8 func_header: ID push OP parameters CP func_return
+
+    9 push: %empty
+
+   10 func_return: DDP ID
+   11            | %empty
+
+   12 main: start_program sentences_list
+
+   13 start_program: %empty
+
+   14 sentences_list: sentences_list alpha sentence
+   15               | sentence
+
+   16 sentence: if_sentence
+   17         | while_sentence
+   18         | ID ASSIGN sumrest ENDLINE
+   19         | sumrest ENDLINE
+   20         | RETURN sumrest ENDLINE
+
+   21 bool_value: sumrest rel_op sumrest
+   22           | OP bool_value CP
+
+   23 orlist: orlist OR alpha andlist
+   24       | andlist
+
+   25 andlist: andlist AND alpha bool_value
+   26        | NOT bool_value
+   27        | bool_value
+
+   28 beta: %empty
+
+   29 alpha: %empty
+
+   30 if_sentence: IF orlist ENDLINE alpha sentences_list beta alpha elseif alpha elsee END ENDLINE
+
+   31 elseif: elseif ELSEIF alpha orlist ENDLINE alpha sentences_list beta
+   32       | %empty
+
+   33 elsee: ELSE ENDLINE alpha sentences_list
+   34      | %empty
+
+   35 while_sentence: WHILE alpha orlist ENDLINE alpha sentences_list END ENDLINE
+
+   36 rel_op: GREATERTHAN
+   37       | GREATEREQ
+   38       | LESSTHAN
+   39       | LESSEQ
+   40       | EQ
+   41       | DIF
+   42       | NOT
+
+   43 matrix_value: FLOAT
+   44             | INTEGER
+
+   45 matrix: matrix PC row
+   46       | row
+
+   47 row: row SPACE matrix_value
+   48    | matrix_value
+
+   49 sumrest: sumrest SUMA mullist
+   50        | sumrest RESTA mullist
+   51        | mullist
+
+   52 mullist: mullist MUL powlist
+   53        | mullist DIV powlist
+   54        | mullist MOD powlist
+   55        | powlist
+
+   56 powlist: powlist POW valor
+   57        | valor
+
+   58 valor: FLOAT
+   59      | INTEGER
+   60      | OP sumrest CP
+   61      | ID
+   62      | OC matrix CC
+   63      | ID OC sumrest CC
+   64      | ID OC sumrest COMMA sumrest CC
+   65      | ID OP func_call CP
+
+   66 func_call: func_call COMMA sumrest
+   67          | sumrest
+   68          | %empty
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    ASSIGN <cl.st.value_data.sense_valor> (258) 18
+    ENDLINE <cl.st.value_data.sense_valor> (259) 4 18 19 20 30 31 33 35
+    INTEGER <cl.st.value_data.enter> (260) 44 59
+    ID <cl.st> (261) 5 6 8 10 18 61 63 64 65
+    FLOAT <cl.st.value_data.real> (262) 43 58
+    STRING <cl.st.value_data.ident> (263)
+    BOOLEAN <cl.st.value_data.boolean> (264)
+    SUMA (265) 49
+    RESTA (266) 50
+    MUL (267) 52
+    DIV (268) 53
+    MOD (269) 54
+    POW (270) 56
+    OP (271) 8 22 60 65
+    CP (272) 8 22 60 65
+    OC (273) 62 63 64
+    CC (274) 62 63 64
+    PC (275) 45
+    SPACE (276) 47
+    COMMA (277) 5 64 66
+    OR (278) 23
+    AND (279) 25
+    NOT (280) 26 42
+    END (281) 4 30 35
+    DDP (282) 5 6 10
+    RETURN (283) 20
+    FUNC (284) 4
+    GREATERTHAN (285) 36
+    LESSTHAN (286) 38
+    GREATEREQ (287) 37
+    LESSEQ (288) 39
+    EQ (289) 40
+    DIF (290) 41
+    FOR (291)
+    IF (292) 30
+    ELSE (293) 33
+    ELSEIF (294) 31
+    IN (295)
+    WHILE (296) 35
+
+
+Nonterminals, with rules where they appear
+
+    $accept (42)
+        on left: 0
+    programa <cl.st> (43)
+        on left: 1
+        on right: 0
+    function_declaration (44)
+        on left: 2 3
+        on right: 1 2
+    function (45)
+        on left: 4
+        on right: 2
+    parameters <cl.st> (46)
+        on left: 5 6 7
+        on right: 5 8
+    func_header <cl.st> (47)
+        on left: 8
+        on right: 4
+    push (48)
+        on left: 9
+        on right: 8
+    func_return <cl.st> (49)
+        on left: 10 11
+        on right: 8
+    main (50)
+        on left: 12
+        on right: 1
+    start_program (51)
+        on left: 13
+        on right: 12
+    sentences_list <cl> (52)
+        on left: 14 15
+        on right: 4 12 14 30 31 33 35
+    sentence <cl> (53)
+        on left: 16 17 18 19 20
+        on right: 14 15
+    bool_value <cl> (54)
+        on left: 21 22
+        on right: 22 25 26 27
+    orlist <cl> (55)
+        on left: 23 24
+        on right: 23 30 31 35
+    andlist <cl> (56)
+        on left: 25 26 27
+        on right: 23 24 25
+    beta <cl> (57)
+        on left: 28
+        on right: 30 31
+    alpha <cl.st.value_data.enter> (58)
+        on left: 29
+        on right: 14 23 25 30 31 33 35
+    if_sentence <cl> (59)
+        on left: 30
+        on right: 16
+    elseif <cl> (60)
+        on left: 31 32
+        on right: 30 31
+    elsee <cl> (61)
+        on left: 33 34
+        on right: 30
+    while_sentence <cl> (62)
+        on left: 35
+        on right: 17
+    rel_op <cl.st.value_data.ident.lexema> (63)
+        on left: 36 37 38 39 40 41 42
+        on right: 21
+    matrix_value <cl.st> (64)
+        on left: 43 44
+        on right: 47 48
+    matrix <cl.st> (65)
+        on left: 45 46
+        on right: 45 62
+    row <cl.st> (66)
+        on left: 47 48
+        on right: 45 46 47
+    sumrest <cl.st> (67)
+        on left: 49 50 51
+        on right: 18 19 20 21 49 50 60 63 64 66 67
+    mullist <cl.st> (68)
+        on left: 52 53 54 55
+        on right: 49 50 51 52 53 54
+    powlist <cl.st> (69)
+        on left: 56 57
+        on right: 52 53 54 55 56
+    valor <cl.st> (70)
+        on left: 58 59 60 61 62 63 64 65
+        on right: 56 57
+    func_call <cl.st> (71)
+        on left: 66 67 68
+        on right: 65 66
+
+
+State 0
+
+    0 $accept: . programa $end
+
+    $default  reduce using rule 3 (function_declaration)
+
+    programa              go to state 1
+    function_declaration  go to state 2
+
+
+State 1
+
+    0 $accept: programa . $end
+
+    $end  shift, and go to state 3
+
+
+State 2
+
+    1 programa: function_declaration . main
+    2 function_declaration: function_declaration . function
+
+    FUNC  shift, and go to state 4
+
+    $default  reduce using rule 13 (start_program)
+
+    function       go to state 5
+    main           go to state 6
+    start_program  go to state 7
+
+
+State 3
+
+    0 $accept: programa $end .
+
+    $default  accept
+
+
+State 4
+
+    4 function: FUNC . func_header ENDLINE sentences_list END ENDLINE
+
+    ID  shift, and go to state 8
+
+    func_header  go to state 9
+
+
+State 5
+
+    2 function_declaration: function_declaration function .
+
+    $default  reduce using rule 2 (function_declaration)
+
+
+State 6
+
+    1 programa: function_declaration main .
+
+    $default  reduce using rule 1 (programa)
+
+
+State 7
+
+   12 main: start_program . sentences_list
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 11
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+    RETURN   shift, and go to state 15
+    IF       shift, and go to state 16
+    WHILE    shift, and go to state 17
+
+    sentences_list  go to state 18
+    sentence        go to state 19
+    if_sentence     go to state 20
+    while_sentence  go to state 21
+    sumrest         go to state 22
+    mullist         go to state 23
+    powlist         go to state 24
+    valor           go to state 25
+
+
+State 8
+
+    8 func_header: ID . push OP parameters CP func_return
+
+    $default  reduce using rule 9 (push)
+
+    push  go to state 26
+
+
+State 9
+
+    4 function: FUNC func_header . ENDLINE sentences_list END ENDLINE
+
+    ENDLINE  shift, and go to state 27
+
+
+State 10
+
+   59 valor: INTEGER .
+
+    $default  reduce using rule 59 (valor)
+
+
+State 11
+
+   18 sentence: ID . ASSIGN sumrest ENDLINE
+   61 valor: ID .
+   63      | ID . OC sumrest CC
+   64      | ID . OC sumrest COMMA sumrest CC
+   65      | ID . OP func_call CP
+
+    ASSIGN  shift, and go to state 28
+    OP      shift, and go to state 29
+    OC      shift, and go to state 30
+
+    $default  reduce using rule 61 (valor)
+
+
+State 12
+
+   58 valor: FLOAT .
+
+    $default  reduce using rule 58 (valor)
+
+
+State 13
+
+   60 valor: OP . sumrest CP
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    sumrest  go to state 32
+    mullist  go to state 23
+    powlist  go to state 24
+    valor    go to state 25
+
+
+State 14
+
+   62 valor: OC . matrix CC
+
+    INTEGER  shift, and go to state 33
+    FLOAT    shift, and go to state 34
+
+    matrix_value  go to state 35
+    matrix        go to state 36
+    row           go to state 37
+
+
+State 15
+
+   20 sentence: RETURN . sumrest ENDLINE
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    sumrest  go to state 38
+    mullist  go to state 23
+    powlist  go to state 24
+    valor    go to state 25
+
+
+State 16
+
+   30 if_sentence: IF . orlist ENDLINE alpha sentences_list beta alpha elseif alpha elsee END ENDLINE
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 39
+    OC       shift, and go to state 14
+    NOT      shift, and go to state 40
+
+    bool_value  go to state 41
+    orlist      go to state 42
+    andlist     go to state 43
+    sumrest     go to state 44
+    mullist     go to state 23
+    powlist     go to state 24
+    valor       go to state 25
+
+
+State 17
+
+   35 while_sentence: WHILE . alpha orlist ENDLINE alpha sentences_list END ENDLINE
+
+    $default  reduce using rule 29 (alpha)
+
+    alpha  go to state 45
+
+
+State 18
+
+   12 main: start_program sentences_list .
+   14 sentences_list: sentences_list . alpha sentence
+
+    $end      reduce using rule 12 (main)
+    $default  reduce using rule 29 (alpha)
+
+    alpha  go to state 46
+
+
+State 19
+
+   15 sentences_list: sentence .
+
+    $default  reduce using rule 15 (sentences_list)
+
+
+State 20
+
+   16 sentence: if_sentence .
+
+    $default  reduce using rule 16 (sentence)
+
+
+State 21
+
+   17 sentence: while_sentence .
+
+    $default  reduce using rule 17 (sentence)
+
+
+State 22
+
+   19 sentence: sumrest . ENDLINE
+   49 sumrest: sumrest . SUMA mullist
+   50        | sumrest . RESTA mullist
+
+    ENDLINE  shift, and go to state 47
+    SUMA     shift, and go to state 48
+    RESTA    shift, and go to state 49
+
+
+State 23
+
+   51 sumrest: mullist .
+   52 mullist: mullist . MUL powlist
+   53        | mullist . DIV powlist
+   54        | mullist . MOD powlist
+
+    MUL  shift, and go to state 50
+    DIV  shift, and go to state 51
+    MOD  shift, and go to state 52
+
+    $default  reduce using rule 51 (sumrest)
+
+
+State 24
+
+   55 mullist: powlist .
+   56 powlist: powlist . POW valor
+
+    POW  shift, and go to state 53
+
+    $default  reduce using rule 55 (mullist)
+
+
+State 25
+
+   57 powlist: valor .
+
+    $default  reduce using rule 57 (powlist)
+
+
+State 26
+
+    8 func_header: ID push . OP parameters CP func_return
+
+    OP  shift, and go to state 54
+
+
+State 27
+
+    4 function: FUNC func_header ENDLINE . sentences_list END ENDLINE
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 11
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+    RETURN   shift, and go to state 15
+    IF       shift, and go to state 16
+    WHILE    shift, and go to state 17
+
+    sentences_list  go to state 55
+    sentence        go to state 19
+    if_sentence     go to state 20
+    while_sentence  go to state 21
+    sumrest         go to state 22
+    mullist         go to state 23
+    powlist         go to state 24
+    valor           go to state 25
+
+
+State 28
+
+   18 sentence: ID ASSIGN . sumrest ENDLINE
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    sumrest  go to state 56
+    mullist  go to state 23
+    powlist  go to state 24
+    valor    go to state 25
+
+
+State 29
+
+   65 valor: ID OP . func_call CP
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    $default  reduce using rule 68 (func_call)
+
+    sumrest    go to state 57
+    mullist    go to state 23
+    powlist    go to state 24
+    valor      go to state 25
+    func_call  go to state 58
+
+
+State 30
+
+   63 valor: ID OC . sumrest CC
+   64      | ID OC . sumrest COMMA sumrest CC
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    sumrest  go to state 59
+    mullist  go to state 23
+    powlist  go to state 24
+    valor    go to state 25
+
+
+State 31
+
+   61 valor: ID .
+   63      | ID . OC sumrest CC
+   64      | ID . OC sumrest COMMA sumrest CC
+   65      | ID . OP func_call CP
+
+    OP  shift, and go to state 29
+    OC  shift, and go to state 30
+
+    $default  reduce using rule 61 (valor)
+
+
+State 32
+
+   49 sumrest: sumrest . SUMA mullist
+   50        | sumrest . RESTA mullist
+   60 valor: OP sumrest . CP
+
+    SUMA   shift, and go to state 48
+    RESTA  shift, and go to state 49
+    CP     shift, and go to state 60
+
+
+State 33
+
+   44 matrix_value: INTEGER .
+
+    $default  reduce using rule 44 (matrix_value)
+
+
+State 34
+
+   43 matrix_value: FLOAT .
+
+    $default  reduce using rule 43 (matrix_value)
+
+
+State 35
+
+   48 row: matrix_value .
+
+    $default  reduce using rule 48 (row)
+
+
+State 36
+
+   45 matrix: matrix . PC row
+   62 valor: OC matrix . CC
+
+    CC  shift, and go to state 61
+    PC  shift, and go to state 62
+
+
+State 37
+
+   46 matrix: row .
+   47 row: row . SPACE matrix_value
+
+    SPACE  shift, and go to state 63
+
+    $default  reduce using rule 46 (matrix)
+
+
+State 38
+
+   20 sentence: RETURN sumrest . ENDLINE
+   49 sumrest: sumrest . SUMA mullist
+   50        | sumrest . RESTA mullist
+
+    ENDLINE  shift, and go to state 64
+    SUMA     shift, and go to state 48
+    RESTA    shift, and go to state 49
+
+
+State 39
+
+   22 bool_value: OP . bool_value CP
+   60 valor: OP . sumrest CP
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 39
+    OC       shift, and go to state 14
+
+    bool_value  go to state 65
+    sumrest     go to state 66
+    mullist     go to state 23
+    powlist     go to state 24
+    valor       go to state 25
+
+
+State 40
+
+   26 andlist: NOT . bool_value
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 39
+    OC       shift, and go to state 14
+
+    bool_value  go to state 67
+    sumrest     go to state 44
+    mullist     go to state 23
+    powlist     go to state 24
+    valor       go to state 25
+
+
+State 41
+
+   27 andlist: bool_value .
+
+    $default  reduce using rule 27 (andlist)
+
+
+State 42
+
+   23 orlist: orlist . OR alpha andlist
+   30 if_sentence: IF orlist . ENDLINE alpha sentences_list beta alpha elseif alpha elsee END ENDLINE
+
+    ENDLINE  shift, and go to state 68
+    OR       shift, and go to state 69
+
+
+State 43
+
+   24 orlist: andlist .
+   25 andlist: andlist . AND alpha bool_value
+
+    AND  shift, and go to state 70
+
+    $default  reduce using rule 24 (orlist)
+
+
+State 44
+
+   21 bool_value: sumrest . rel_op sumrest
+   49 sumrest: sumrest . SUMA mullist
+   50        | sumrest . RESTA mullist
+
+    SUMA         shift, and go to state 48
+    RESTA        shift, and go to state 49
+    NOT          shift, and go to state 71
+    GREATERTHAN  shift, and go to state 72
+    LESSTHAN     shift, and go to state 73
+    GREATEREQ    shift, and go to state 74
+    LESSEQ       shift, and go to state 75
+    EQ           shift, and go to state 76
+    DIF          shift, and go to state 77
+
+    rel_op  go to state 78
+
+
+State 45
+
+   35 while_sentence: WHILE alpha . orlist ENDLINE alpha sentences_list END ENDLINE
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 39
+    OC       shift, and go to state 14
+    NOT      shift, and go to state 40
+
+    bool_value  go to state 41
+    orlist      go to state 79
+    andlist     go to state 43
+    sumrest     go to state 44
+    mullist     go to state 23
+    powlist     go to state 24
+    valor       go to state 25
+
+
+State 46
+
+   14 sentences_list: sentences_list alpha . sentence
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 11
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+    RETURN   shift, and go to state 15
+    IF       shift, and go to state 16
+    WHILE    shift, and go to state 17
+
+    sentence        go to state 80
+    if_sentence     go to state 20
+    while_sentence  go to state 21
+    sumrest         go to state 22
+    mullist         go to state 23
+    powlist         go to state 24
+    valor           go to state 25
+
+
+State 47
+
+   19 sentence: sumrest ENDLINE .
+
+    $default  reduce using rule 19 (sentence)
+
+
+State 48
+
+   49 sumrest: sumrest SUMA . mullist
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    mullist  go to state 81
+    powlist  go to state 24
+    valor    go to state 25
+
+
+State 49
+
+   50 sumrest: sumrest RESTA . mullist
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    mullist  go to state 82
+    powlist  go to state 24
+    valor    go to state 25
+
+
+State 50
+
+   52 mullist: mullist MUL . powlist
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    powlist  go to state 83
+    valor    go to state 25
+
+
+State 51
+
+   53 mullist: mullist DIV . powlist
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    powlist  go to state 84
+    valor    go to state 25
+
+
+State 52
+
+   54 mullist: mullist MOD . powlist
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    powlist  go to state 85
+    valor    go to state 25
+
+
+State 53
+
+   56 powlist: powlist POW . valor
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    valor  go to state 86
+
+
+State 54
+
+    8 func_header: ID push OP . parameters CP func_return
+
+    ID  shift, and go to state 87
+
+    $default  reduce using rule 7 (parameters)
+
+    parameters  go to state 88
+
+
+State 55
+
+    4 function: FUNC func_header ENDLINE sentences_list . END ENDLINE
+   14 sentences_list: sentences_list . alpha sentence
+
+    END  shift, and go to state 89
+
+    $default  reduce using rule 29 (alpha)
+
+    alpha  go to state 46
+
+
+State 56
+
+   18 sentence: ID ASSIGN sumrest . ENDLINE
+   49 sumrest: sumrest . SUMA mullist
+   50        | sumrest . RESTA mullist
+
+    ENDLINE  shift, and go to state 90
+    SUMA     shift, and go to state 48
+    RESTA    shift, and go to state 49
+
+
+State 57
+
+   49 sumrest: sumrest . SUMA mullist
+   50        | sumrest . RESTA mullist
+   67 func_call: sumrest .
+
+    SUMA   shift, and go to state 48
+    RESTA  shift, and go to state 49
+
+    $default  reduce using rule 67 (func_call)
+
+
+State 58
+
+   65 valor: ID OP func_call . CP
+   66 func_call: func_call . COMMA sumrest
+
+    CP     shift, and go to state 91
+    COMMA  shift, and go to state 92
+
+
+State 59
+
+   49 sumrest: sumrest . SUMA mullist
+   50        | sumrest . RESTA mullist
+   63 valor: ID OC sumrest . CC
+   64      | ID OC sumrest . COMMA sumrest CC
+
+    SUMA   shift, and go to state 48
+    RESTA  shift, and go to state 49
+    CC     shift, and go to state 93
+    COMMA  shift, and go to state 94
+
+
+State 60
+
+   60 valor: OP sumrest CP .
+
+    $default  reduce using rule 60 (valor)
+
+
+State 61
+
+   62 valor: OC matrix CC .
+
+    $default  reduce using rule 62 (valor)
+
+
+State 62
+
+   45 matrix: matrix PC . row
+
+    INTEGER  shift, and go to state 33
+    FLOAT    shift, and go to state 34
+
+    matrix_value  go to state 35
+    row           go to state 95
+
+
+State 63
+
+   47 row: row SPACE . matrix_value
+
+    INTEGER  shift, and go to state 33
+    FLOAT    shift, and go to state 34
+
+    matrix_value  go to state 96
+
+
+State 64
+
+   20 sentence: RETURN sumrest ENDLINE .
+
+    $default  reduce using rule 20 (sentence)
+
+
+State 65
+
+   22 bool_value: OP bool_value . CP
+
+    CP  shift, and go to state 97
+
+
+State 66
+
+   21 bool_value: sumrest . rel_op sumrest
+   49 sumrest: sumrest . SUMA mullist
+   50        | sumrest . RESTA mullist
+   60 valor: OP sumrest . CP
+
+    SUMA         shift, and go to state 48
+    RESTA        shift, and go to state 49
+    CP           shift, and go to state 60
+    NOT          shift, and go to state 71
+    GREATERTHAN  shift, and go to state 72
+    LESSTHAN     shift, and go to state 73
+    GREATEREQ    shift, and go to state 74
+    LESSEQ       shift, and go to state 75
+    EQ           shift, and go to state 76
+    DIF          shift, and go to state 77
+
+    rel_op  go to state 78
+
+
+State 67
+
+   26 andlist: NOT bool_value .
+
+    $default  reduce using rule 26 (andlist)
+
+
+State 68
+
+   30 if_sentence: IF orlist ENDLINE . alpha sentences_list beta alpha elseif alpha elsee END ENDLINE
+
+    $default  reduce using rule 29 (alpha)
+
+    alpha  go to state 98
+
+
+State 69
+
+   23 orlist: orlist OR . alpha andlist
+
+    $default  reduce using rule 29 (alpha)
+
+    alpha  go to state 99
+
+
+State 70
+
+   25 andlist: andlist AND . alpha bool_value
+
+    $default  reduce using rule 29 (alpha)
+
+    alpha  go to state 100
+
+
+State 71
+
+   42 rel_op: NOT .
+
+    $default  reduce using rule 42 (rel_op)
+
+
+State 72
+
+   36 rel_op: GREATERTHAN .
+
+    $default  reduce using rule 36 (rel_op)
+
+
+State 73
+
+   38 rel_op: LESSTHAN .
+
+    $default  reduce using rule 38 (rel_op)
+
+
+State 74
+
+   37 rel_op: GREATEREQ .
+
+    $default  reduce using rule 37 (rel_op)
+
+
+State 75
+
+   39 rel_op: LESSEQ .
+
+    $default  reduce using rule 39 (rel_op)
+
+
+State 76
+
+   40 rel_op: EQ .
+
+    $default  reduce using rule 40 (rel_op)
+
+
+State 77
+
+   41 rel_op: DIF .
+
+    $default  reduce using rule 41 (rel_op)
+
+
+State 78
+
+   21 bool_value: sumrest rel_op . sumrest
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    sumrest  go to state 101
+    mullist  go to state 23
+    powlist  go to state 24
+    valor    go to state 25
+
+
+State 79
+
+   23 orlist: orlist . OR alpha andlist
+   35 while_sentence: WHILE alpha orlist . ENDLINE alpha sentences_list END ENDLINE
+
+    ENDLINE  shift, and go to state 102
+    OR       shift, and go to state 69
+
+
+State 80
+
+   14 sentences_list: sentences_list alpha sentence .
+
+    $default  reduce using rule 14 (sentences_list)
+
+
+State 81
+
+   49 sumrest: sumrest SUMA mullist .
+   52 mullist: mullist . MUL powlist
+   53        | mullist . DIV powlist
+   54        | mullist . MOD powlist
+
+    MUL  shift, and go to state 50
+    DIV  shift, and go to state 51
+    MOD  shift, and go to state 52
+
+    $default  reduce using rule 49 (sumrest)
+
+
+State 82
+
+   50 sumrest: sumrest RESTA mullist .
+   52 mullist: mullist . MUL powlist
+   53        | mullist . DIV powlist
+   54        | mullist . MOD powlist
+
+    MUL  shift, and go to state 50
+    DIV  shift, and go to state 51
+    MOD  shift, and go to state 52
+
+    $default  reduce using rule 50 (sumrest)
+
+
+State 83
+
+   52 mullist: mullist MUL powlist .
+   56 powlist: powlist . POW valor
+
+    POW  shift, and go to state 53
+
+    $default  reduce using rule 52 (mullist)
+
+
+State 84
+
+   53 mullist: mullist DIV powlist .
+   56 powlist: powlist . POW valor
+
+    POW  shift, and go to state 53
+
+    $default  reduce using rule 53 (mullist)
+
+
+State 85
+
+   54 mullist: mullist MOD powlist .
+   56 powlist: powlist . POW valor
+
+    POW  shift, and go to state 53
+
+    $default  reduce using rule 54 (mullist)
+
+
+State 86
+
+   56 powlist: powlist POW valor .
+
+    $default  reduce using rule 56 (powlist)
+
+
+State 87
+
+    6 parameters: ID . DDP ID
+
+    DDP  shift, and go to state 103
+
+
+State 88
+
+    5 parameters: parameters . COMMA ID DDP ID
+    8 func_header: ID push OP parameters . CP func_return
+
+    CP     shift, and go to state 104
+    COMMA  shift, and go to state 105
+
+
+State 89
+
+    4 function: FUNC func_header ENDLINE sentences_list END . ENDLINE
+
+    ENDLINE  shift, and go to state 106
+
+
+State 90
+
+   18 sentence: ID ASSIGN sumrest ENDLINE .
+
+    $default  reduce using rule 18 (sentence)
+
+
+State 91
+
+   65 valor: ID OP func_call CP .
+
+    $default  reduce using rule 65 (valor)
+
+
+State 92
+
+   66 func_call: func_call COMMA . sumrest
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    sumrest  go to state 107
+    mullist  go to state 23
+    powlist  go to state 24
+    valor    go to state 25
+
+
+State 93
+
+   63 valor: ID OC sumrest CC .
+
+    $default  reduce using rule 63 (valor)
+
+
+State 94
+
+   64 valor: ID OC sumrest COMMA . sumrest CC
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+
+    sumrest  go to state 108
+    mullist  go to state 23
+    powlist  go to state 24
+    valor    go to state 25
+
+
+State 95
+
+   45 matrix: matrix PC row .
+   47 row: row . SPACE matrix_value
+
+    SPACE  shift, and go to state 63
+
+    $default  reduce using rule 45 (matrix)
+
+
+State 96
+
+   47 row: row SPACE matrix_value .
+
+    $default  reduce using rule 47 (row)
+
+
+State 97
+
+   22 bool_value: OP bool_value CP .
+
+    $default  reduce using rule 22 (bool_value)
+
+
+State 98
+
+   30 if_sentence: IF orlist ENDLINE alpha . sentences_list beta alpha elseif alpha elsee END ENDLINE
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 11
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+    RETURN   shift, and go to state 15
+    IF       shift, and go to state 16
+    WHILE    shift, and go to state 17
+
+    sentences_list  go to state 109
+    sentence        go to state 19
+    if_sentence     go to state 20
+    while_sentence  go to state 21
+    sumrest         go to state 22
+    mullist         go to state 23
+    powlist         go to state 24
+    valor           go to state 25
+
+
+State 99
+
+   23 orlist: orlist OR alpha . andlist
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 39
+    OC       shift, and go to state 14
+    NOT      shift, and go to state 40
+
+    bool_value  go to state 41
+    andlist     go to state 110
+    sumrest     go to state 44
+    mullist     go to state 23
+    powlist     go to state 24
+    valor       go to state 25
+
+
+State 100
+
+   25 andlist: andlist AND alpha . bool_value
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 39
+    OC       shift, and go to state 14
+
+    bool_value  go to state 111
+    sumrest     go to state 44
+    mullist     go to state 23
+    powlist     go to state 24
+    valor       go to state 25
+
+
+State 101
+
+   21 bool_value: sumrest rel_op sumrest .
+   49 sumrest: sumrest . SUMA mullist
+   50        | sumrest . RESTA mullist
+
+    SUMA   shift, and go to state 48
+    RESTA  shift, and go to state 49
+
+    $default  reduce using rule 21 (bool_value)
+
+
+State 102
+
+   35 while_sentence: WHILE alpha orlist ENDLINE . alpha sentences_list END ENDLINE
+
+    $default  reduce using rule 29 (alpha)
+
+    alpha  go to state 112
+
+
+State 103
+
+    6 parameters: ID DDP . ID
+
+    ID  shift, and go to state 113
+
+
+State 104
+
+    8 func_header: ID push OP parameters CP . func_return
+
+    DDP  shift, and go to state 114
+
+    $default  reduce using rule 11 (func_return)
+
+    func_return  go to state 115
+
+
+State 105
+
+    5 parameters: parameters COMMA . ID DDP ID
+
+    ID  shift, and go to state 116
+
+
+State 106
+
+    4 function: FUNC func_header ENDLINE sentences_list END ENDLINE .
+
+    $default  reduce using rule 4 (function)
+
+
+State 107
+
+   49 sumrest: sumrest . SUMA mullist
+   50        | sumrest . RESTA mullist
+   66 func_call: func_call COMMA sumrest .
+
+    SUMA   shift, and go to state 48
+    RESTA  shift, and go to state 49
+
+    $default  reduce using rule 66 (func_call)
+
+
+State 108
+
+   49 sumrest: sumrest . SUMA mullist
+   50        | sumrest . RESTA mullist
+   64 valor: ID OC sumrest COMMA sumrest . CC
+
+    SUMA   shift, and go to state 48
+    RESTA  shift, and go to state 49
+    CC     shift, and go to state 117
+
+
+State 109
+
+   14 sentences_list: sentences_list . alpha sentence
+   30 if_sentence: IF orlist ENDLINE alpha sentences_list . beta alpha elseif alpha elsee END ENDLINE
+
+    END       reduce using rule 28 (beta)
+    ELSE      reduce using rule 28 (beta)
+    ELSEIF    reduce using rule 28 (beta)
+    $default  reduce using rule 29 (alpha)
+
+    beta   go to state 118
+    alpha  go to state 46
+
+
+State 110
+
+   23 orlist: orlist OR alpha andlist .
+   25 andlist: andlist . AND alpha bool_value
+
+    AND  shift, and go to state 70
+
+    $default  reduce using rule 23 (orlist)
+
+
+State 111
+
+   25 andlist: andlist AND alpha bool_value .
+
+    $default  reduce using rule 25 (andlist)
+
+
+State 112
+
+   35 while_sentence: WHILE alpha orlist ENDLINE alpha . sentences_list END ENDLINE
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 11
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+    RETURN   shift, and go to state 15
+    IF       shift, and go to state 16
+    WHILE    shift, and go to state 17
+
+    sentences_list  go to state 119
+    sentence        go to state 19
+    if_sentence     go to state 20
+    while_sentence  go to state 21
+    sumrest         go to state 22
+    mullist         go to state 23
+    powlist         go to state 24
+    valor           go to state 25
+
+
+State 113
+
+    6 parameters: ID DDP ID .
+
+    $default  reduce using rule 6 (parameters)
+
+
+State 114
+
+   10 func_return: DDP . ID
+
+    ID  shift, and go to state 120
+
+
+State 115
+
+    8 func_header: ID push OP parameters CP func_return .
+
+    $default  reduce using rule 8 (func_header)
+
+
+State 116
+
+    5 parameters: parameters COMMA ID . DDP ID
+
+    DDP  shift, and go to state 121
+
+
+State 117
+
+   64 valor: ID OC sumrest COMMA sumrest CC .
+
+    $default  reduce using rule 64 (valor)
+
+
+State 118
+
+   30 if_sentence: IF orlist ENDLINE alpha sentences_list beta . alpha elseif alpha elsee END ENDLINE
+
+    $default  reduce using rule 29 (alpha)
+
+    alpha  go to state 122
+
+
+State 119
+
+   14 sentences_list: sentences_list . alpha sentence
+   35 while_sentence: WHILE alpha orlist ENDLINE alpha sentences_list . END ENDLINE
+
+    END  shift, and go to state 123
+
+    $default  reduce using rule 29 (alpha)
+
+    alpha  go to state 46
+
+
+State 120
+
+   10 func_return: DDP ID .
+
+    $default  reduce using rule 10 (func_return)
+
+
+State 121
+
+    5 parameters: parameters COMMA ID DDP . ID
+
+    ID  shift, and go to state 124
+
+
+State 122
+
+   30 if_sentence: IF orlist ENDLINE alpha sentences_list beta alpha . elseif alpha elsee END ENDLINE
+
+    $default  reduce using rule 32 (elseif)
+
+    elseif  go to state 125
+
+
+State 123
+
+   35 while_sentence: WHILE alpha orlist ENDLINE alpha sentences_list END . ENDLINE
+
+    ENDLINE  shift, and go to state 126
+
+
+State 124
+
+    5 parameters: parameters COMMA ID DDP ID .
+
+    $default  reduce using rule 5 (parameters)
+
+
+State 125
+
+   30 if_sentence: IF orlist ENDLINE alpha sentences_list beta alpha elseif . alpha elsee END ENDLINE
+   31 elseif: elseif . ELSEIF alpha orlist ENDLINE alpha sentences_list beta
+
+    ELSEIF  shift, and go to state 127
+
+    $default  reduce using rule 29 (alpha)
+
+    alpha  go to state 128
+
+
+State 126
+
+   35 while_sentence: WHILE alpha orlist ENDLINE alpha sentences_list END ENDLINE .
+
+    $default  reduce using rule 35 (while_sentence)
+
+
+State 127
+
+   31 elseif: elseif ELSEIF . alpha orlist ENDLINE alpha sentences_list beta
+
+    $default  reduce using rule 29 (alpha)
+
+    alpha  go to state 129
+
+
+State 128
+
+   30 if_sentence: IF orlist ENDLINE alpha sentences_list beta alpha elseif alpha . elsee END ENDLINE
+
+    ELSE  shift, and go to state 130
+
+    $default  reduce using rule 34 (elsee)
+
+    elsee  go to state 131
+
+
+State 129
+
+   31 elseif: elseif ELSEIF alpha . orlist ENDLINE alpha sentences_list beta
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 31
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 39
+    OC       shift, and go to state 14
+    NOT      shift, and go to state 40
+
+    bool_value  go to state 41
+    orlist      go to state 132
+    andlist     go to state 43
+    sumrest     go to state 44
+    mullist     go to state 23
+    powlist     go to state 24
+    valor       go to state 25
+
+
+State 130
+
+   33 elsee: ELSE . ENDLINE alpha sentences_list
+
+    ENDLINE  shift, and go to state 133
+
+
+State 131
+
+   30 if_sentence: IF orlist ENDLINE alpha sentences_list beta alpha elseif alpha elsee . END ENDLINE
+
+    END  shift, and go to state 134
+
+
+State 132
+
+   23 orlist: orlist . OR alpha andlist
+   31 elseif: elseif ELSEIF alpha orlist . ENDLINE alpha sentences_list beta
+
+    ENDLINE  shift, and go to state 135
+    OR       shift, and go to state 69
+
+
+State 133
+
+   33 elsee: ELSE ENDLINE . alpha sentences_list
+
+    $default  reduce using rule 29 (alpha)
+
+    alpha  go to state 136
+
+
+State 134
+
+   30 if_sentence: IF orlist ENDLINE alpha sentences_list beta alpha elseif alpha elsee END . ENDLINE
+
+    ENDLINE  shift, and go to state 137
+
+
+State 135
+
+   31 elseif: elseif ELSEIF alpha orlist ENDLINE . alpha sentences_list beta
+
+    $default  reduce using rule 29 (alpha)
+
+    alpha  go to state 138
+
+
+State 136
+
+   33 elsee: ELSE ENDLINE alpha . sentences_list
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 11
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+    RETURN   shift, and go to state 15
+    IF       shift, and go to state 16
+    WHILE    shift, and go to state 17
+
+    sentences_list  go to state 139
+    sentence        go to state 19
+    if_sentence     go to state 20
+    while_sentence  go to state 21
+    sumrest         go to state 22
+    mullist         go to state 23
+    powlist         go to state 24
+    valor           go to state 25
+
+
+State 137
+
+   30 if_sentence: IF orlist ENDLINE alpha sentences_list beta alpha elseif alpha elsee END ENDLINE .
+
+    $default  reduce using rule 30 (if_sentence)
+
+
+State 138
+
+   31 elseif: elseif ELSEIF alpha orlist ENDLINE alpha . sentences_list beta
+
+    INTEGER  shift, and go to state 10
+    ID       shift, and go to state 11
+    FLOAT    shift, and go to state 12
+    OP       shift, and go to state 13
+    OC       shift, and go to state 14
+    RETURN   shift, and go to state 15
+    IF       shift, and go to state 16
+    WHILE    shift, and go to state 17
+
+    sentences_list  go to state 140
+    sentence        go to state 19
+    if_sentence     go to state 20
+    while_sentence  go to state 21
+    sumrest         go to state 22
+    mullist         go to state 23
+    powlist         go to state 24
+    valor           go to state 25
+
+
+State 139
+
+   14 sentences_list: sentences_list . alpha sentence
+   33 elsee: ELSE ENDLINE alpha sentences_list .
+
+    END       reduce using rule 33 (elsee)
+    $default  reduce using rule 29 (alpha)
+
+    alpha  go to state 46
+
+
+State 140
+
+   14 sentences_list: sentences_list . alpha sentence
+   31 elseif: elseif ELSEIF alpha orlist ENDLINE alpha sentences_list . beta
+
+    END       reduce using rule 28 (beta)
+    ELSE      reduce using rule 28 (beta)
+    ELSEIF    reduce using rule 28 (beta)
+    $default  reduce using rule 29 (alpha)
+
+    beta   go to state 141
+    alpha  go to state 46
+
+
+State 141
+
+   31 elseif: elseif ELSEIF alpha orlist ENDLINE alpha sentences_list beta .
+
+    $default  reduce using rule 31 (elseif)

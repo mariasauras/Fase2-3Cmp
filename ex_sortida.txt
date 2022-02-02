@@ -1,0 +1,49 @@
+001: START  
+002: $t1 := m ADDI b
+003: c := $t1
+004: RETURN c 
+005: END
+ 
+001: START  
+002: $t1 := v[4]
+003: temp := $t1
+004: END
+ 
+001: START main 
+002: m := 2
+003: s := 6
+004: IF m GT 3 GOTO 8
+005: GOTO  6
+006: IF s EQ 6 GOTO 8
+007: GOTO  14
+008: PARAM 5 
+009: PARAM m 
+010: $t1 := CALL sum 
+011: $t2 := $t1 MULI 5
+012: k := $t2
+013: GOTO  20
+014: IF m EQ 2 GOTO 16
+015: GOTO  18
+016: k := 5
+017: GOTO  20
+018: k := 9
+019: pepe := 4
+020: matrix[0] := 1 
+021: matrix[4] := 4 
+022: matrix[8] := 2 
+023: matrix[12] := 5 
+024: matrix[16] := 3 
+025: matrix[20] := 5 
+026: $t3 := m MULI 4
+027: $t4 := $t3 ADDI 1
+028: $t5 := matrix[$t4]
+029: PARAM $t5 
+030: PUTI, 1 
+031: vector[0] := 1 
+032: vector[4] := 4 
+033: vector[8] := 3 
+034: PARAM vector 
+035: CALL readValue 
+036: x := 17.000000
+037: HALT 
+038: END 

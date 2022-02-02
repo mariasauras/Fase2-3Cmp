@@ -38,46 +38,49 @@ unsigned long tmp_cnt = 0;
 }
 
 /* Identifiers, variables and types */
-%token <st.value_data.sense_valor> ASSIGN ENDLINE
-%token <st.value_data.enter> INTEGER
-%token <st> ID
-%token <st.value_data.real> FLOAT
-%token <st.value_data.ident> STRING
+%token <cl.st.value_data.sense_valor> ASSIGN ENDLINE
+%token <cl.st.value_data.enter> INTEGER
+%token <cl.st> ID
+%token <cl.st.value_data.real> FLOAT
+%token <cl.st.value_data.ident> STRING
+%token <cl.st.value_data.boolean> BOOLEAN
 
 /* Arithmetical operators */
 %token  SUMA RESTA MUL DIV MOD POW 
 
 /* Symbols */
-%token OP CP OC CC PC SPACE COMMA FP_D
+%token OP CP OC CC PC SPACE COMMA OR AND NOT
 
 /* Funcions and Procedures*/
 %token END DDP RETURN FUNC
 
 /* Relational Operators */
-%token GREATERTHAN LESSTHAN GREATEREQ LESSEQ EQ DIF FP_D
+%token GREATERTHAN LESSTHAN GREATEREQ LESSEQ EQ DIF 
 
 /* Control structures tokens */
 %token FOR IF ELSE ELSEIF IN WHILE
 
-%type <st> programa
-%type <st> valor
-%type <st> sumrest mullist powlist
-%type <st> matrix row  matrix_value 
+%type <cl.st> programa
+%type <cl.st> valor
+%type <cl.st> sumrest mullist powlist
+%type <cl.st> matrix row  matrix_value 
 
-%type <st> func_header
-%type <st> parameters
-%type <st> func_call
-%type <st> func_return
+%type <cl.st> func_header
+%type <cl.st> parameters
+%type <cl.st> func_call
+%type <cl.st> func_return
 
-%type <cl> bool_value 
+%type <cl> bool_value orlist andlist beta 
+%type <cl> sentences_list sentence if_sentence elseif elsee while_sentence
+%type <cl.st.value_data.enter> alpha
+%type <cl.st.value_data.ident.lexema> rel_op
 
 
 /* Declarations */
 %type main
 %type function
-%type sentences_list
-%type sentence
 %type start_program
+
 
 %start programa
 
@@ -134,16 +137,21 @@ push : { push_scope(); }
 func_return : DDP ID              { $$ = $2;}
             |                     { $$.value_data.return_type = UNKNOWN_TYPE; }        
 
-main : start_program sentences_list
+main : start_program sentences_list { complete($2.lls, ln_inst); }
 
 start_program : { emet(NULL, 0, NULL, "START main", NULL); }                               
 
-sentences_list : sentences_list sentence
+sentences_list : sentences_list alpha sentence {
+                  complete($1.lls, $2);
+                  $$.lls = $3.lls;
+                }
                | sentence
 
 
-sentence : ID ASSIGN sumrest ENDLINE  {
-
+sentence : if_sentence
+          | while_sentence
+          | ID ASSIGN sumrest ENDLINE  {
+                          $$.lls = createEmptyList(); 
                           type type;
                           bool temp_type = false;
 
@@ -165,7 +173,12 @@ sentence : ID ASSIGN sumrest ENDLINE  {
 
                             $3.value_data.id_type = FLOAT_TYPE;
 
-                          }else if (type == MATRIX_TYPE){
+                          } else if(type == BOOL_TYPE){
+                            emet($1.value_data.ident.lexema,0,&$3,NULL,NULL);
+
+                            $3.value_data.id_type = BOOL_TYPE;
+
+                          } else if (type == MATRIX_TYPE){
                               $3.value_data.id_type = MATRIX_TYPE;
 
                               if($3.value_data.matrix_type == INT_TYPE) {
@@ -210,7 +223,7 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                           sym_enter($1.value_data.ident.lexema, &$3);
                         }
                       | sumrest ENDLINE  { 
-
+                          $$.lls = createEmptyList(); 
                           type valueType;                     
                         
                           if($1.value_type == TMP_TYPE){
@@ -241,7 +254,8 @@ sentence : ID ASSIGN sumrest ENDLINE  {
                             
                           } else yyerror("AQUI HAY UN ERROR"); 
                         }
-                        | RETURN sumrest ENDLINE {                   
+                        | RETURN sumrest ENDLINE {   
+                            $$.lls = createEmptyList();                
                            emet(NULL,0,NULL,"RETURN",&$2);
                           }
 
@@ -250,13 +264,13 @@ sentence : ID ASSIGN sumrest ENDLINE  {
 bool_value : sumrest rel_op sumrest {
                                       $$.llc = createList(ln_inst);
                                       $$.llf = createList(ln_inst+1);
-                                      //TODO: EMET IF
-                                      emet(NULL,0,NULL,"GOTO",NULL);
+                                      if_emet(&$1,$2,&$3,0);
+                                      goto_emet(0);
                                     }
            | OP bool_value CP       { $$ = $2; }
 
 orlist : orlist OR alpha andlist  {
-                                    $$.llc = fusion($$1.llc,$4.llc);
+                                    $$.llc = fusion($1.llc,$4.llc);
                                     $$.llf = $4.llf;
                                     complete($1.llf,$3); 
                                   }
@@ -265,7 +279,7 @@ orlist : orlist OR alpha andlist  {
 andlist : andlist AND alpha bool_value {
                                         complete($1.llc, $3);
                                         $$.llc = $4.llc;
-                                        $$.llf = fusion($$1.llf,$4.llf);
+                                        $$.llf = fusion($1.llf,$4.llf);
                                       }
         | NOT bool_value              {
                                         $$.llc = $2.llf;
@@ -275,17 +289,17 @@ andlist : andlist AND alpha bool_value {
 
 beta :                              {
                                       $$.lls = createList(ln_inst);
-                                      emet(NULL,0,NULL,"GOTO",NULL);
+                                      goto_emet(0);
                                     }
 
 alpha :                             { $$ = ln_inst; }
 
-if_sentence : IF orlist ENDLINE alpha sentences_list beta alpha elseif alpha else END ENDLINE
+if_sentence : IF orlist ENDLINE alpha sentences_list beta alpha elseif alpha elsee END ENDLINE
                                                                               {
                                                                                   complete($2.llc, $4);
                                                                                   complete($2.llf, $7);
                                                                                   complete($8.llf, $9);
-                                                                                  cond_list fusiona = fusion($10.lls,$6.lls);
+                                                                                  list fusiona = fusion($10.lls,$6.lls);
                                                                                   $$.lls = fusion($8.lls,fusiona);
                                                                               }
 
@@ -294,14 +308,21 @@ elseif : elseif ELSEIF alpha orlist ENDLINE alpha sentences_list beta
                                                                           complete($4.llc, $6);
                                                                           complete($1.llf, $3);
                                                                           $$.llf = $4.llf;
-                                                                          cond_list fusiona = fusion($7.lls, $8.lls);
-                                                                          $$.lls = fusiona(fusiona,$1.lls);
+                                                                          list fusiona = fusion($7.lls, $8.lls);
+                                                                          $$.lls = fusion(fusiona,$1.lls);
                                                                         }
         |                                                               { $$.lls = createEmptyList(); }
 
-else : ELSE ENDLINE alpha sentences_list    { $$.lls = $4.lls; } 
+elsee : ELSE ENDLINE alpha sentences_list    { $$.lls = $4.lls; } 
      |                                      { $$.lls = createEmptyList(); }
 
+while_sentence : WHILE alpha orlist ENDLINE alpha sentences_list END ENDLINE
+                                                                          {
+                                                                            complete($3.llc, $5);
+                                                                            complete($6.lls, $2);
+                                                                            goto_emet($2);
+                                                                            $$.lls = $3.llf;
+                                                                          }
 
 rel_op : GREATERTHAN            { $$ = "GT";  }
        | GREATEREQ              { $$ = "GE";  }
@@ -310,8 +331,6 @@ rel_op : GREATERTHAN            { $$ = "GT";  }
        | EQ                     { $$ = "EQ";  }
        | DIF                    { $$ = "NEQ"; }
        | NOT                    { $$ = "NOT"; }
-
-/* TODO: CAMBIAR LOS ACCESOS !!!!!!! */
 
 matrix_value : FLOAT    { $$.value_type = FLOAT_TYPE; $$.value_data.real = $1;  }
              | INTEGER  { $$.value_type = INT_TYPE; $$.value_data.enter = $1; }

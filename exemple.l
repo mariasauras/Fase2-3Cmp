@@ -46,8 +46,6 @@ boolean (true|false)
 
 "else"                      { return ELSE; }
 
-"div"                       { return FP_D; }
-
 "::"                        { return DDP; }
 
 "return"                    { return RETURN; }

@@ -73,6 +73,10 @@
     
     void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_type* v2);
 
+    void if_emet(sym_value_type* v1, char* op,sym_value_type* v2, long dest);
+
+    void goto_emet(long line_num);
+
     void getType(type* x, type* y, sym_value_type v1, sym_value_type v2);
 
     void treat_parameter(sym_value_type v1, sym_value_type v2);
@@ -89,15 +93,15 @@
     /*                       BACK-PATCHING  FUNCTIONS                     */
     /**********************************************************************/
 
-    cond_list createEmptyList();
+    list createEmptyList();
 
-    cond_list createList(long ln);
+    list createList(long ln);
 
-    void addElem(cond_list* l, long v);
+    void addElem(list* l, long v);
 
-    void complete(cond_list l, long v);
+    void complete(list l, long v);
 
-    cond_list fusion(cond_list l, cond_list l2);
+    list fusion(list l, list l2);
 
 
 #endif

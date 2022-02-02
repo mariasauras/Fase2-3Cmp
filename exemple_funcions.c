@@ -942,6 +942,12 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
         sprintf(v1_buff, "%s", v1->value_data.ident.lexema);
       }else if(v1->value_type == FUNCTION){
         sprintf(v1_buff, "%s", v1->value_data.ident.lexema);
+      }else if(v1->value_type == BOOL_TYPE){
+        if(v1->value_data.boolean == 1)
+          sprintf(v1_buff, "true");
+        else
+          sprintf(v1_buff, "false");
+
       } else if(v1->value_type == MATRIX_TYPE){
         if(v1->value_data.matrix_type == FLOAT_TYPE){
           sprintf(v1_buff, "[%ld] = %f",v1->value_data.despl,v1->value_data.float_matrix[v1->value_data.pos]);
@@ -966,7 +972,12 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
         sprintf(v2_buff, "%s", v2->value_data.ident.lexema);
       } else if(v2->value_type == FUNCTION){
         sprintf(v2_buff, "%s", v2->value_data.ident.lexema);
-      } else if(v2->value_type == MATRIX_TYPE){
+      } else if(v2->value_type == BOOL_TYPE){
+        if(v2->value_data.boolean == 1)
+          sprintf(v1_buff, "true");
+        else
+          sprintf(v1_buff, "false");
+      }else if(v2->value_type == MATRIX_TYPE){
         if(v2->value_data.matrix_type == FLOAT_TYPE){
           sprintf(v2_buff, "[%ld] = %f",v2->value_data.despl,v2->value_data.float_matrix[v2->value_data.pos]);
         } else sprintf(v2_buff, "[%ld] = %ld",v2->value_data.despl,v2->value_data.integer_matrix[v2->value_data.pos]); 
@@ -996,14 +1007,20 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
   }else {
     /* en el caso en que Var != NULL, significará que solo tendremos un operando, es por eso que solo tenemos en cuenta V1.*/
     if(v1 == NULL)
-      sprintf(buffer, "%03ld: %s:= $t%ld",ln_inst,var,tmp);
+      sprintf(buffer, "%03ld: %s := $t%ld",ln_inst,var,tmp);
     else
       if(v1->value_type == INT_TYPE)
-        sprintf(buffer, "%03ld: %s:= %ld",ln_inst,var,v1->value_data.enter);
+        sprintf(buffer, "%03ld: %s := %ld",ln_inst,var,v1->value_data.enter);
       else if (v1->value_type == FLOAT_TYPE)
-        sprintf(buffer, "%03ld: %s:= %f",ln_inst,var,v1->value_data.real);
+        sprintf(buffer, "%03ld: %s := %f",ln_inst,var,v1->value_data.real);
+      else if (v1->value_type == BOOL_TYPE)
+        if(v1->value_data.boolean == 1)
+          sprintf(buffer, "%03ld: %s := true",ln_inst,var);
+        else
+          sprintf(buffer, "%03ld: %s := false",ln_inst,var);
+          
       else if (v1->value_type == TMP_TYPE)
-        sprintf(buffer,"%03ld: %s:= %ld",ln_inst,var,v1->value_data.tmp_val);
+        sprintf(buffer,"%03ld: %s := %ld",ln_inst,var,v1->value_data.tmp_val);
       else if (v1->value_type == MATRIX_TYPE){
         if(v1->value_data.matrix_type == FLOAT_TYPE)
           sprintf(buffer,"%03ld: %s[%ld] := %f ",ln_inst,var,v1->value_data.despl,v1->value_data.float_matrix[v1->value_data.pos]);
@@ -1016,6 +1033,87 @@ void emet(char* var, unsigned long tmp, sym_value_type* v1, char* op, sym_value_
   ln_inst++;
 }
 
+/* Función emet para el condicional if */
+void if_emet(sym_value_type* v1, char* op,sym_value_type* v2, long dest){
+  char* buffer = malloc(MAX_INS*sizeof(char));
+
+  char v1_buff[MAX_INS];
+  for(int i=0;i< MAX_INS; i++)
+    v1_buff[i]=0;
+
+  if(v1->value_type == INT_TYPE){
+    sprintf(v1_buff, "%ld", v1->value_data.enter);
+  } else if(v1->value_type == FLOAT_TYPE){
+    sprintf(v1_buff, "%f", v1->value_data.real);
+  }else if(v1->value_type == TMP_TYPE){
+    sprintf(v1_buff, "$t%ld", v1->value_data.tmp_val);
+  } else if(v1->value_type == ID_TYPE){
+    sprintf(v1_buff, "%s", v1->value_data.ident.lexema);
+  }else if(v1->value_type == FUNCTION){
+    sprintf(v1_buff, "%s", v1->value_data.ident.lexema);
+  } else if(v1->value_type == MATRIX_TYPE){
+    if(v1->value_data.matrix_type == FLOAT_TYPE){
+      sprintf(v1_buff, "[%ld] = %f",v1->value_data.despl,v1->value_data.float_matrix[v1->value_data.pos]);
+    } else sprintf(v1_buff, "[%ld] = %ld",v1->value_data.despl,v1->value_data.integer_matrix[v1->value_data.pos]); 
+  }
+
+  char v2_buff[MAX_INS];
+  for(int i=0; i < MAX_INS; i++)
+    v2_buff[i]=0;
+
+  if(v2 != NULL){
+      if(v2->value_type == INT_TYPE){
+        sprintf(v2_buff, "%ld", v2->value_data.enter);
+      } else if(v2->value_type == FLOAT_TYPE){
+        sprintf(v2_buff, "%f", v2->value_data.real);
+      }else if(v2->value_type == TMP_TYPE){
+        sprintf(v2_buff, "$t%ld", v2->value_data.tmp_val);
+      } else if(v2->value_type == ID_TYPE){
+        sprintf(v2_buff, "%s", v2->value_data.ident.lexema);
+      } else if(v2->value_type == FUNCTION){
+        sprintf(v2_buff, "%s", v2->value_data.ident.lexema);
+      } else if(v2->value_type == MATRIX_TYPE){
+        if(v2->value_data.matrix_type == FLOAT_TYPE){
+          sprintf(v2_buff, "[%ld] = %f",v2->value_data.despl,v2->value_data.float_matrix[v2->value_data.pos]);
+        } else sprintf(v2_buff, "[%ld] = %ld",v2->value_data.despl,v2->value_data.integer_matrix[v2->value_data.pos]); 
+      }
+    } 
+  
+  type t1 = getTypeV(*v1);
+  type t2 = getTypeV(*v2);
+  if(v2 != NULL){
+    if((t1 == BOOL_TYPE && t2 != BOOL_TYPE) || (t2 == BOOL_TYPE && t1 != BOOL_TYPE)) yyerror("Incompatible type in IF");
+
+    if(dest == 0)
+      sprintf(buffer,"%03ld: IF %s %s %s GOTO",ln_inst,v1_buff,op,v2_buff);
+    else
+      sprintf(buffer,"%03ld: IF %s %s %s GOTO %ld",ln_inst,v1_buff,op,v2_buff,dest);
+       
+  } else{
+    if(dest == 0)
+      sprintf(buffer, "%03ld: IF %s GOTO", ln_inst,v1_buff);
+    else
+      sprintf(buffer, "%03ld: IF %s GOTO %ld", ln_inst,v1_buff,dest);
+      
+  }
+
+  instructions_buffer[ln_inst-1] = buffer;
+  ln_inst++;
+  
+}
+/* Función emet para el goto */
+void goto_emet(long line_number){
+  char buffer[MAX_INS];
+  for(int i=0;i>MAX_INS;i++)
+    buffer[i]=0;
+  
+  if(line_number != 0)
+    sprintf(buffer,"GOTO %ld", line_number);
+  else
+    sprintf(buffer,"GOTO");
+
+  emet(NULL,0,NULL,buffer,NULL);
+}
 /* Función para tratar los parametros de las funciones */
 void treat_parameter(sym_value_type v1, sym_value_type val_type){
 
@@ -1069,8 +1167,8 @@ void pop_scope(){
 
 
 /* Creamos una lista enlazada vacía. */
-cond_list createEmptyList(){
-  cond_list l;
+list createEmptyList(){
+  list l;
   l.num_elems = 0;
   l.start_point = NULL;
 
@@ -1078,25 +1176,25 @@ cond_list createEmptyList(){
 }
 
 /* Inicializamos una lista enlazada */
-cond_list createList(long ln){
-  cond_list l;
+list createList(long ln){
+  list l;
   l.num_elems = 1;
 
-  node* node = (node*) malloc(sizeof(node));
-  if(node == NULL) yyerror("Error. Can't inicialize heap memory");
-  (*node).line_num = ln;
-  (*node).next_elem = NULL;
+  node* n = (node*)calloc(1,sizeof(n));
+  if(n == NULL) yyerror("Error. Can't inicialize heap memory");
+  (*n).line_num = ln;
+  (*n).next_elem = NULL;
 
-  l.start_point = node;
+  l.start_point = n;
 
   return l;
 }
 
 /* Añadimos un nuevo elemento a la lista */
-void addElem(cond_list* l, long v){
+void addElem(list* l, long v){
   node* n = l->start_point;
 
-  node* newNode = (node*) calloc(sizeof(node));
+  node* newNode = (node*) calloc(1,sizeof(node));
   if(newNode == NULL) yyerror("Error. Can't inicialize heap memory");
 
   (*newNode).line_num = v;
@@ -1109,7 +1207,7 @@ void addElem(cond_list* l, long v){
 }
 
 /* Completamos las intrucciones pendientes de completar con la lista indicada: p.ej --> GOTO (Line Number) */
-void complete(cond_list l, long v){
+void complete(list l, long v){
   
   char* buffer;
   node* n = l.start_point;
@@ -1121,7 +1219,7 @@ void complete(cond_list l, long v){
 
     sprintf(buffer,"%s %ld",instructions_buffer[(*n).line_num-1],v);
     /* Liberamos la memoria que usa la instruccion incompleta */
-    free(instructions_buffer[(*n).line_num-1])
+    free(instructions_buffer[(*n).line_num-1]);
 
     /* Actualizamos la posición de la intruccion incompleta completandola */
     instructions_buffer[(*n).line_num-1] = buffer;
@@ -1133,22 +1231,22 @@ void complete(cond_list l, long v){
 }
 
 /* Fusionamos dos funciones*/
-cond_list fusion(cond_list l, cond_list l2){
-  cond_list newList;
+list fusion(list l, list l2){
+  list newList;
   newList = createEmptyList();
 
-  node* node;
-  node = l.start_point;
-  while(node != NULL){
-    addElem(&newList,(*node).line_num);
-    node = (*node).next_elem;
+  node* n;
+  n = l.start_point;
+  while(n!= NULL){
+    addElem(&newList,(*n).line_num);
+    n = (*n).next_elem;
     newList.num_elems +=1;
   }
 
-  node = l2.start_point;
-  while(node != NULL){
-    addElem(&newList,(*node).line_num);
-    node = (*node).next_elem;
+  n = l2.start_point;
+  while(n!= NULL){
+    addElem(&newList,(*n).line_num);
+    n = (*n).next_elem;
     newList.num_elems +=1;
   }
 
