@@ -60,6 +60,28 @@ typedef struct sym_value_type {
 	type value_type;
 }sym_value_type;  
 
+/* Nodo de las Listas encadenadas: lista de siguiente, lista de ciertos y lista de falsos */
+typedef struct node {
+	long line_num;
+	struct node* next_elem;	
+}node; 
+
+/* Listas encadenadas. */
+typedef struct list {
+	node* start_point;
+	long num_elems;	
+}list; 
+
+/* Listas usadas por las estructuras de control */
+typedef struct cond_list {
+	sym_value_type st;
+	list lls;
+	list llc;
+	list llf;	
+}cond_list;  
+
+
+
 /* Uncomment the following define if bindings should point to rather than   */
 /* contain values.                                                          */
 /* #define SYM_POINTS_TO_VALUE */ 

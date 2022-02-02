@@ -1,6 +1,6 @@
 /*
 *         Maria Sauras Fernandez
-*   Second part of Minijulia Compiler
+*       Stage 3 of Minijulia Compiler
 *           Lexical class (Flex)
 */
 
@@ -30,10 +30,23 @@ digit   [0-9]
 float   {digit}+"."{digit}*("e-"{digit}+)? 
 text    ["][^_\n\t\"\']*["] 
 comment ([#][^\n\"\']* | [#=][^\"\']*[=#])
+boolean (true|false)
 
 %%
 
-"div"                      { return FP_D; }
+"in"                        { return IN; }
+
+"for"                       { return FOR; }
+
+"while"                      { return WHILE; }
+
+"if"                        { return IF; }
+
+"elseif"                    { return ELSEIF; }
+
+"else"                      { return ELSE; }
+
+"div"                       { return FP_D; }
 
 "::"                        { return DDP; }
 
@@ -43,14 +56,43 @@ comment ([#][^\n\"\']* | [#=][^\"\']*[=#])
 
 "function"                  { return FUNC; }
 
+{boolean}                  {
+                              if (strcmp(strdup(yytext),"false") == 0)
+                                yylval.cl.st.value_data.boolean = 0;
+                              else
+                                yylval.cl.st.value_data.boolean = 1;
+                                
+                              yylval.cl.st.value_data.ident.value_type = BOOL_TYPE;
+                              return BOOLEAN; 
+                            }
+            
+
 
 {lletra}({lletra}|{digit})*_*({lletra}|{digit})* {
-                              yylval.st.value_data.ident.lexema = strdup(yytext);
-                              yylval.st.value_data.ident.lenght = yyleng;
-                              yylval.st.value_data.ident.line = yylineno;
-                              yylval.st.value_data.ident.value_type = UNKNOWN_TYPE;
+                              yylval.cl.st.value_data.ident.lexema = strdup(yytext);
+                              yylval.cl.st.value_data.ident.lenght = yyleng;
+                              yylval.cl.st.value_data.ident.line = yylineno;
+                              yylval.cl.st.value_data.ident.value_type = UNKNOWN_TYPE;
                               return ID;
                             }
+
+">"                         { return GREATERTHAN; }
+
+">="                        { return GREATEREQ; }
+
+"<"                         { return LESSTHAN; }
+
+"<="                        { return LESSEQ; }
+
+"=="                        { return EQ; }
+
+"!="                        { return DIF; }
+
+"!"                         { return NOT; }
+
+"&&"                        { return AND; }
+
+"||"                        { return OR; }
                             
 
 "("                         { return OP; }
@@ -82,21 +124,21 @@ comment ([#][^\n\"\']* | [#=][^\"\']*[=#])
 " "*"]"                     { BEGIN INITIAL; return CC; }
 
 {text}                      {
-                              yylval.st.value_data.ident.lexema = strdup(yytext);
-                              yylval.st.value_data.ident.lenght = yyleng;
-                              yylval.st.value_data.ident.value_type = STRING_TYPE;
+                              yylval.cl.st.value_data.ident.lexema = strdup(yytext);
+                              yylval.cl.st.value_data.ident.lenght = yyleng;
+                              yylval.cl.st.value_data.ident.value_type = STRING_TYPE;
                               return STRING;
                             } 
 
 
 {float}                     {
-                              yylval.st.value_data.real = atof(yytext);
+                              yylval.cl.st.value_data.real = atof(yytext);
                               return FLOAT;
                             }
 
 
 {digit}+                    {
-                              yylval.st.value_data.enter = atoi(yytext);
+                              yylval.cl.st.value_data.enter = atoi(yytext);
                               return INTEGER;
                             }
 

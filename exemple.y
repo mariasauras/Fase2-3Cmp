@@ -1,6 +1,6 @@
 /*
 *         Maria Sauras Fernandez
-*   Second part of Minijulia Compiler
+*       Stage 3 of Minijulia Compiler
 *        Sintactical class (BISON)
 */
 
@@ -34,7 +34,7 @@ unsigned long tmp_cnt = 0;
 }
 
 %union{
-  sym_value_type st;
+  cond_list cl;
 }
 
 /* Identifiers, variables and types */
@@ -53,6 +53,12 @@ unsigned long tmp_cnt = 0;
 /* Funcions and Procedures*/
 %token END DDP RETURN FUNC
 
+/* Relational Operators */
+%token GREATERTHAN LESSTHAN GREATEREQ LESSEQ EQ DIF FP_D
+
+/* Control structures tokens */
+%token FOR IF ELSE ELSEIF IN WHILE
+
 %type <st> programa
 %type <st> valor
 %type <st> sumrest mullist powlist
@@ -62,6 +68,8 @@ unsigned long tmp_cnt = 0;
 %type <st> parameters
 %type <st> func_call
 %type <st> func_return
+
+%type <cl> bool_value 
 
 
 /* Declarations */
@@ -239,6 +247,71 @@ sentence : ID ASSIGN sumrest ENDLINE  {
 
 /* Priority Hierarchy */
 
+bool_value : sumrest rel_op sumrest {
+                                      $$.llc = createList(ln_inst);
+                                      $$.llf = createList(ln_inst+1);
+                                      //TODO: EMET IF
+                                      emet(NULL,0,NULL,"GOTO",NULL);
+                                    }
+           | OP bool_value CP       { $$ = $2; }
+
+orlist : orlist OR alpha andlist  {
+                                    $$.llc = fusion($$1.llc,$4.llc);
+                                    $$.llf = $4.llf;
+                                    complete($1.llf,$3); 
+                                  }
+      | andlist
+
+andlist : andlist AND alpha bool_value {
+                                        complete($1.llc, $3);
+                                        $$.llc = $4.llc;
+                                        $$.llf = fusion($$1.llf,$4.llf);
+                                      }
+        | NOT bool_value              {
+                                        $$.llc = $2.llf;
+                                        $$.llf = $2.llc;
+                                      } 
+        | bool_value
+
+beta :                              {
+                                      $$.lls = createList(ln_inst);
+                                      emet(NULL,0,NULL,"GOTO",NULL);
+                                    }
+
+alpha :                             { $$ = ln_inst; }
+
+if_sentence : IF orlist ENDLINE alpha sentences_list beta alpha elseif alpha else END ENDLINE
+                                                                              {
+                                                                                  complete($2.llc, $4);
+                                                                                  complete($2.llf, $7);
+                                                                                  complete($8.llf, $9);
+                                                                                  cond_list fusiona = fusion($10.lls,$6.lls);
+                                                                                  $$.lls = fusion($8.lls,fusiona);
+                                                                              }
+
+elseif : elseif ELSEIF alpha orlist ENDLINE alpha sentences_list beta
+                                                                        {
+                                                                          complete($4.llc, $6);
+                                                                          complete($1.llf, $3);
+                                                                          $$.llf = $4.llf;
+                                                                          cond_list fusiona = fusion($7.lls, $8.lls);
+                                                                          $$.lls = fusiona(fusiona,$1.lls);
+                                                                        }
+        |                                                               { $$.lls = createEmptyList(); }
+
+else : ELSE ENDLINE alpha sentences_list    { $$.lls = $4.lls; } 
+     |                                      { $$.lls = createEmptyList(); }
+
+
+rel_op : GREATERTHAN            { $$ = "GT";  }
+       | GREATEREQ              { $$ = "GE";  }
+       | LESSTHAN               { $$ = "LT";  }
+       | LESSEQ                 { $$ = "LE";  }
+       | EQ                     { $$ = "EQ";  }
+       | DIF                    { $$ = "NEQ"; }
+       | NOT                    { $$ = "NOT"; }
+
+/* TODO: CAMBIAR LOS ACCESOS !!!!!!! */
 
 matrix_value : FLOAT    { $$.value_type = FLOAT_TYPE; $$.value_data.real = $1;  }
              | INTEGER  { $$.value_type = INT_TYPE; $$.value_data.enter = $1; }

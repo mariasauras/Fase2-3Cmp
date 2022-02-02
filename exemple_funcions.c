@@ -659,7 +659,7 @@ void acces_matrix(sym_value_type * vector, char * id, sym_value_type v1, sym_val
 /*                 BOOLEAN & RELATIONAL FUNCTIONS                     */
 /**********************************************************************/
 
-/*       EN LA FASE 2 NO USAREMOS BOLEANOS ==> Dejamos comentadas las funciones que les corresponden. 
+
 
 void not_op(sym_value_type * not, sym_value_type v1){
 
@@ -871,7 +871,7 @@ void dif_op(sym_value_type * dif, sym_value_type v1, sym_value_type v2){
       yyerror("ERROR! Both values should be of the same type");
    } else yyerror("The value can only be integer or float");
 }
-*/
+
 
 /**********************************************************************/
 /*                            C3A  FUNCTIONS                          */
@@ -1062,3 +1062,98 @@ void push_scope(){
 void pop_scope(){
   if(sym_pop_scope() != SYMTAB_OK) yyerror("Error in pop");
 }
+
+/**********************************************************************/
+/*                       BACK-PATCHING  FUNCTIONS                     */
+/**********************************************************************/
+
+
+/* Creamos una lista enlazada vacía. */
+cond_list createEmptyList(){
+  cond_list l;
+  l.num_elems = 0;
+  l.start_point = NULL;
+
+  return l;
+}
+
+/* Inicializamos una lista enlazada */
+cond_list createList(long ln){
+  cond_list l;
+  l.num_elems = 1;
+
+  node* node = (node*) malloc(sizeof(node));
+  if(node == NULL) yyerror("Error. Can't inicialize heap memory");
+  (*node).line_num = ln;
+  (*node).next_elem = NULL;
+
+  l.start_point = node;
+
+  return l;
+}
+
+/* Añadimos un nuevo elemento a la lista */
+void addElem(cond_list* l, long v){
+  node* n = l->start_point;
+
+  node* newNode = (node*) calloc(sizeof(node));
+  if(newNode == NULL) yyerror("Error. Can't inicialize heap memory");
+
+  (*newNode).line_num = v;
+  (*newNode).next_elem = NULL;
+  if(n == NULL) l->start_point = newNode;
+  else{
+    while((*n).next_elem != NULL) n = (*n).next_elem;
+    (*n).next_elem = newNode;
+  }
+}
+
+/* Completamos las intrucciones pendientes de completar con la lista indicada: p.ej --> GOTO (Line Number) */
+void complete(cond_list l, long v){
+  
+  char* buffer;
+  node* n = l.start_point;
+
+  while(n != NULL){
+
+    buffer = calloc(MAX_INS, sizeof(char));
+    if(buffer == NULL) yyerror("Error. Can't inicialize heap memory");
+
+    sprintf(buffer,"%s %ld",instructions_buffer[(*n).line_num-1],v);
+    /* Liberamos la memoria que usa la instruccion incompleta */
+    free(instructions_buffer[(*n).line_num-1])
+
+    /* Actualizamos la posición de la intruccion incompleta completandola */
+    instructions_buffer[(*n).line_num-1] = buffer;
+
+    /* Miramos el siguiente nodo de la lista (si hay) */
+    n = (*n).next_elem;
+
+  }
+}
+
+/* Fusionamos dos funciones*/
+cond_list fusion(cond_list l, cond_list l2){
+  cond_list newList;
+  newList = createEmptyList();
+
+  node* node;
+  node = l.start_point;
+  while(node != NULL){
+    addElem(&newList,(*node).line_num);
+    node = (*node).next_elem;
+    newList.num_elems +=1;
+  }
+
+  node = l2.start_point;
+  while(node != NULL){
+    addElem(&newList,(*node).line_num);
+    node = (*node).next_elem;
+    newList.num_elems +=1;
+  }
+
+  return newList;
+
+}
+
+

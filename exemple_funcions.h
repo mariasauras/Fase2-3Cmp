@@ -85,4 +85,19 @@
 
     void pop_scope();
 
+    /**********************************************************************/
+    /*                       BACK-PATCHING  FUNCTIONS                     */
+    /**********************************************************************/
+
+    cond_list createEmptyList();
+
+    cond_list createList(long ln);
+
+    void addElem(cond_list* l, long v);
+
+    void complete(cond_list l, long v);
+
+    cond_list fusion(cond_list l, cond_list l2);
+
+
 #endif
