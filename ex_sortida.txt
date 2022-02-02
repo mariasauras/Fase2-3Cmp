@@ -42,8 +42,13 @@
 031: vector[0] := 1 
 032: vector[4] := 4 
 033: vector[8] := 3 
-034: PARAM vector 
-035: CALL readValue 
-036: x := 17.000000
-037: HALT 
-038: END 
+034: IF m GT 3 GOTO 38
+035: GOTO  36
+036: IF s EQ 6 GOTO 38
+037: GOTO  42
+038: PARAM vector 
+039: CALL readValue 
+040: x := 17.000000
+041: GOTO 34 
+042: HALT 
+043: END 

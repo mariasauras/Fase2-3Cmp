@@ -150,6 +150,7 @@ sentences_list : sentences_list alpha sentence {
 
 sentence : if_sentence
           | while_sentence
+          | for_sentence
           | ID ASSIGN sumrest ENDLINE  {
                           $$.lls = createEmptyList(); 
                           type type;
