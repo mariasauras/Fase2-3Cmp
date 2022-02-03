@@ -21,5 +21,7 @@ while m > 3 || s == 6
    readValue(vector)
    x = 17.0
 end
-i = 1
-n = i + 2
+for i in 1:4
+   m = 0
+   m = 4 + m
+end
