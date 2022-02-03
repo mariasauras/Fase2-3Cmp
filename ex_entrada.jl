@@ -13,7 +13,6 @@ elseif m == 2
    k = 5
 else
    k = 9
-   pepe = 4
 end
 matrix = [1 4;2 5;3 5]
 matrix[m,1]
@@ -22,3 +21,5 @@ while m > 3 || s == 6
    readValue(vector)
    x = 17.0
 end
+i = 1
+n = i + 2

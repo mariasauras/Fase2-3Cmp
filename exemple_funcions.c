@@ -121,7 +121,7 @@ void sum_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
     /* Tipo de valor de las variables x e y*/
     getType(&x,&y,v1,v2);
     
-    /* Realizamos los catings y una vez hechos o si no hace falta hacer casting, hacemos la suma.*/
+    /* Realizamos los casts y una vez hechos o si no hace falta hacer cast, hacemos la suma.*/
     if(x == FLOAT_TYPE && y == INT_TYPE){
       tmp = getTmp();
       emet(NULL, tmp, NULL, "I2F", &v2);
@@ -141,7 +141,7 @@ void sum_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
       
 
      else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
-       yyerror("Can't operate with these values");
+       yyerror("Can't operate with these values in sum op");
     
     
     tmp = getTmp();
@@ -197,7 +197,7 @@ void rest_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
       (*val).value_data.tmp_type= INT_TYPE;
       sprintf(sum_buffer,"%s","SUBI");
     } else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
-       yyerror("Can't operate with these values");
+       yyerror("Can't operate with these values in substract op");
     
     
     tmp = getTmp();
@@ -255,7 +255,7 @@ void mul_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
       (*val).value_data.tmp_type= INT_TYPE;
 
     } else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
-       yyerror("Can't operate with these values");
+       yyerror("Can't operate with these values in mul op");
     
     
     tmp = getTmp();
@@ -312,7 +312,7 @@ void div_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
       sprintf(sum_buffer,"%s","DIVI");
 
     } else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
-       yyerror("Can't operate with these values");
+       yyerror("Can't operate with these values in div op");
     
     
     tmp = getTmp();
@@ -349,7 +349,7 @@ void mod_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
        (*val).value_data.tmp_type= INT_TYPE;
       (*val).value_data.tmp_val = tmp;
 
-    } else yyerror("Can't operate with these type of values.");
+    } else yyerror("Can't operate with these type of values in mod op.");
 
 
   }
@@ -400,7 +400,7 @@ void pow_op(sym_value_type * val, sym_value_type v1, sym_value_type v2){
       sprintf(sum_buffer,"%s","POWI");
 
     } else if(x != FLOAT_TYPE && y != FLOAT_TYPE) 
-       yyerror("Can't operate with these values");
+       yyerror("Can't operate with these values in pow op.");
     
     
     tmp = getTmp();
@@ -1127,7 +1127,7 @@ void treat_parameter(sym_value_type v1, sym_value_type val_type){
   }else if(strcmp(val_type.value_data.ident.lexema, "Vector{Float32}") == 0){
     v1.value_data.id_type = MATRIX_TYPE;
     v1.value_data.matrix_type = FLOAT_TYPE;
-  } else yyerror("Incorrect Parameter Type.");
+  } else yyerror("Incorrect Parameter Type in treat parameters.");
 
   v1.value_type = ID_TYPE;
   /* Guardamos en la tabla de simbolos el valor de ID*/
@@ -1150,7 +1150,7 @@ void treat_return(sym_value_type* v1, sym_value_type val_type){
   } else if(strcmp(val_type.value_data.ident.lexema, "Vector{Float32}") == 0){
     (*v1).value_data.id_type = MATRIX_TYPE;
     (*v1).value_data.matrix_type = FLOAT_TYPE;
-  } else yyerror("Incorrect Parameter Type.");
+  } else yyerror("Incorrect Return Parameter Type.");
 }
 
 void push_scope(){
@@ -1181,7 +1181,7 @@ list createList(long ln){
   l.num_elems = 1;
 
   node* n = (node*)calloc(1,sizeof(n));
-  if(n == NULL) yyerror("Error. Can't inicialize heap memory");
+  if(n == NULL) yyerror("Error in Create List. Can't inicialize heap memory");
   (*n).line_num = ln;
   (*n).next_elem = NULL;
 
@@ -1195,7 +1195,7 @@ void addElem(list* l, long v){
   node* n = l->start_point;
 
   node* newNode = (node*) calloc(1,sizeof(node));
-  if(newNode == NULL) yyerror("Error. Can't inicialize heap memory");
+  if(newNode == NULL) yyerror("Error in AddElem. Can't inicialize heap memory");
 
   (*newNode).line_num = v;
   (*newNode).next_elem = NULL;
@@ -1215,7 +1215,7 @@ void complete(list l, long v){
   while(n != NULL){
 
     buffer = calloc(MAX_INS, sizeof(char));
-    if(buffer == NULL) yyerror("Error. Can't inicialize heap memory");
+    if(buffer == NULL) yyerror("Error in complete. Can't inicialize heap memory");
 
     sprintf(buffer,"%s %ld",instructions_buffer[(*n).line_num-1],v);
     /* Liberamos la memoria que usa la instruccion incompleta */
@@ -1254,4 +1254,22 @@ list fusion(list l, list l2){
 
 }
 
+/* Function to treat error in for sentence */
+void error_treatment(sym_value_type* v1, sym_value_type* v2, sym_value_type* v3){
 
+  if(v1 != NULL && v2 != NULL && v3 != NULL){
+    if(getTypeV(*v1) != INT_TYPE && getTypeV(*v2) != INT_TYPE && getTypeV(*v3) != INT_TYPE)
+      yyerror("ERROR in for sentences. The ranges in for must be integers");
+  }else if(v1 != NULL && v2 != NULL){
+    if(getTypeV(*v1) != INT_TYPE && getTypeV(*v2) != INT_TYPE)
+      yyerror("ERROR in for sentences. The ranges in for must be integers");
+  }
+}
+
+/* Function to save ID into Symtab */
+void saveInto(char* id, sym_value_type* v1){
+  
+  if(sym_enter(id,v1) == SYMTAB_NO_MEMORY)
+    yyerror("Error in function save id into symtab. Memory allocation error.");
+
+}

@@ -20,7 +20,6 @@ char* instructions_buffer[1000];
 
 /* Control Var to generated line number of the instruction and temporally variables*/
 unsigned long ln_inst = 1;
-
 unsigned long tmp_cnt = 0;
 
 %}
@@ -52,7 +51,7 @@ unsigned long tmp_cnt = 0;
 %token OP CP OC CC PC SPACE COMMA OR AND NOT
 
 /* Funcions and Procedures*/
-%token END DDP RETURN FUNC
+%token END DDP RETURN FUNC DP
 
 /* Relational Operators */
 %token GREATERTHAN LESSTHAN GREATEREQ LESSEQ EQ DIF 
@@ -70,8 +69,8 @@ unsigned long tmp_cnt = 0;
 %type <cl.st> func_call
 %type <cl.st> func_return
 
-%type <cl> bool_value orlist andlist beta 
-%type <cl> sentences_list sentence if_sentence elseif elsee while_sentence
+%type <cl> bool_value orlist andlist beta gamma
+%type <cl> sentences_list sentence if_sentence elseif elsee while_sentence for_sentence
 %type <cl.st.value_data.enter> alpha
 %type <cl.st.value_data.ident.lexema> rel_op
 
@@ -324,6 +323,43 @@ while_sentence : WHILE alpha orlist ENDLINE alpha sentences_list END ENDLINE
                                                                             goto_emet($2);
                                                                             $$.lls = $3.llf;
                                                                           }
+
+for_sentence : gamma sentences_list END ENDLINE {
+                                                  complete($2.lls,ln_inst);
+                                                  sym_value_type aux;
+                                                  sum_op(&aux,$1.st,$1.inc);
+                                                  emet($1.st.value_data.ident.lexema,aux.value_data.tmp_val,NULL,NULL,NULL);
+                                                  goto_emet($1.ln);
+                                                  $$.lls = $1.lls;
+                                                }
+
+gamma : FOR ID IN sumrest DP sumrest DP sumrest ENDLINE {
+                                                          error_treatment(&$4,&$6,&$8);
+                                                          emet($2.value_data.ident.lexema, 0,&$4, NULL,NULL);
+                                                          $2.value_data.id_type = INT_TYPE;
+                                                          saveInto($2.value_data.ident.lexema,&$2);
+                                                          $$.inc = $6;
+                                                          $$.st = $2;
+                                                          $$.ln = ln_inst;
+                                                          if_emet(&$2,"LS",&$8,ln_inst+2);
+                                                          $$.lls = createList(ln_inst);
+                                                          goto_emet(0);
+                                                        }
+      | FOR ID IN sumrest DP sumrest ENDLINE            {
+                                                          error_treatment(&$4,&$6,NULL);
+                                                          emet($2.value_data.ident.lexema, 0,&$4, NULL,NULL);
+                                                          $2.value_data.id_type = INT_TYPE;
+                                                          saveInto($2.value_data.ident.lexema,&$2);
+                                                          sym_value_type aux;
+                                                          aux.value_data.enter = 1;
+                                                          aux.value_type = INT_TYPE;
+                                                          $$.inc = aux;
+                                                          $$.st = $2;
+                                                          $$.ln = ln_inst;
+                                                          if_emet(&$2,"LS",&$6,ln_inst+2);
+                                                          $$.lls = createList(ln_inst);
+                                                          goto_emet(0);
+                                                        }
 
 rel_op : GREATERTHAN            { $$ = "GT";  }
        | GREATEREQ              { $$ = "GE";  }

@@ -103,5 +103,9 @@
 
     list fusion(list l, list l2);
 
+    void saveInto(char* id, sym_value_type* v1);
+    
+    void error_treatment(sym_value_type* v1, sym_value_type* v2, sym_value_type* v3);
+
 
 #endif

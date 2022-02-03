@@ -79,7 +79,9 @@ typedef struct cond_list {
 	sym_value_type st;
 	list lls;
 	list llc;
-	list llf;	
+	list llf;
+	long ln;
+	sym_value_type inc;	
 }cond_list;  
 
 

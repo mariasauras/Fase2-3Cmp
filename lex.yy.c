@@ -373,8 +373,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 42
-#define YY_END_OF_BUFFER 43
+#define YY_NUM_RULES 43
+#define YY_END_OF_BUFFER 44
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -384,18 +384,18 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[104] =
     {   0,
-        0,    0,    0,    0,   43,   41,   40,   41,   19,   41,
-       28,   41,   22,   23,   26,   24,   31,   25,   27,   38,
-       41,   15,   30,   13,   12,   32,   35,   29,   12,   12,
-       12,   12,   12,   12,   41,   41,   39,   41,   34,   33,
-       34,    0,   35,   18,    0,   36,   20,   37,   38,    7,
-       16,   17,   14,   12,   12,   32,   12,   12,   12,   12,
-       12,    4,    1,   12,   12,   12,   21,    0,   39,    0,
-       34,   33,   33,   34,   37,    0,   12,   12,    9,   12,
-        2,   12,   12,   12,   12,    0,    6,   12,   12,   12,
-       11,   12,   37,   12,   12,   12,    3,    5,   12,    8,
+        0,    0,    0,    0,   44,   42,   41,   42,   20,   42,
+       29,   42,   23,   24,   27,   25,   32,   26,   28,   39,
+        8,   16,   31,   14,   13,   33,   36,   30,   13,   13,
+       13,   13,   13,   13,   42,   42,   40,   42,   35,   34,
+       35,    0,   36,   19,    0,   37,   21,   38,   39,    7,
+       17,   18,   15,   13,   13,   33,   13,   13,   13,   13,
+       13,    4,    1,   13,   13,   13,   22,    0,   40,    0,
+       35,   34,   34,   35,   38,    0,   13,   13,   10,   13,
+        2,   13,   13,   13,   13,    0,    6,   13,   13,   13,
+       12,   13,   38,   13,   13,   13,    3,    5,   13,    9,
 
-       12,   10,    0
+       13,   11,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -534,11 +534,11 @@ static const flex_int16_t yy_chk[242] =
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static const flex_int32_t yy_rule_can_match_eol[43] =
+static const flex_int32_t yy_rule_can_match_eol[44] =
     {   0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
-    1, 0, 0,     };
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    1, 1, 0, 0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -902,21 +902,26 @@ YY_RULE_SETUP
 case 8:
 YY_RULE_SETUP
 #line 51 "exemple.l"
-{ return RETURN; }
+{ return DP; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 53 "exemple.l"
-{ return END; }
+{ return RETURN; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 55 "exemple.l"
-{ return FUNC; }
+{ return END; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 57 "exemple.l"
+{ return FUNC; }
+	YY_BREAK
+case 12:
+YY_RULE_SETUP
+#line 59 "exemple.l"
 {
                               if (strcmp(strdup(yytext),"false") == 0)
                                 yylval.cl.st.value_data.boolean = 0;
@@ -927,9 +932,9 @@ YY_RULE_SETUP
                               return BOOLEAN; 
                             }
 	YY_BREAK
-case 12:
+case 13:
 YY_RULE_SETUP
-#line 69 "exemple.l"
+#line 71 "exemple.l"
 {
                               yylval.cl.st.value_data.ident.lexema = strdup(yytext);
                               yylval.cl.st.value_data.ident.lenght = yyleng;
@@ -938,124 +943,124 @@ YY_RULE_SETUP
                               return ID;
                             }
 	YY_BREAK
-case 13:
-YY_RULE_SETUP
-#line 77 "exemple.l"
-{ return GREATERTHAN; }
-	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 79 "exemple.l"
-{ return GREATEREQ; }
+{ return GREATERTHAN; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 81 "exemple.l"
-{ return LESSTHAN; }
+{ return GREATEREQ; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 83 "exemple.l"
-{ return LESSEQ; }
+{ return LESSTHAN; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 85 "exemple.l"
-{ return EQ; }
+{ return LESSEQ; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 87 "exemple.l"
-{ return DIF; }
+{ return EQ; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 89 "exemple.l"
-{ return NOT; }
+{ return DIF; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 91 "exemple.l"
-{ return AND; }
+{ return NOT; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 93 "exemple.l"
-{ return OR; }
+{ return AND; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 96 "exemple.l"
-{ return OP; }
+#line 95 "exemple.l"
+{ return OR; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 98 "exemple.l"
-{ return CP; }
+{ return OP; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 100 "exemple.l"
-{ return SUMA; }
+{ return CP; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 102 "exemple.l"
-{ return RESTA; }
+{ return SUMA; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 104 "exemple.l"
-{ return MUL; } 
+{ return RESTA; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 106 "exemple.l"
-{ return DIV; }
+{ return MUL; } 
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 108 "exemple.l"
-{ return MOD; }
+{ return DIV; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 110 "exemple.l"
-{ return POW; }                    
+{ return MOD; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 112 "exemple.l"
-{ return ASSIGN; }
+{ return POW; }                    
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 114 "exemple.l"
-{ return COMMA; } 
+{ return ASSIGN; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 116 "exemple.l"
-{ BEGIN MATRIX; return OC; }
+{ return COMMA; } 
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 118 "exemple.l"
-{ return PC; }
+{ BEGIN MATRIX; return OC; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 120 "exemple.l"
-{ return SPACE; }        
+{ return PC; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 122 "exemple.l"
-{ BEGIN INITIAL; return CC; }
+{ return SPACE; }        
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 124 "exemple.l"
+{ BEGIN INITIAL; return CC; }
+	YY_BREAK
+case 37:
+YY_RULE_SETUP
+#line 126 "exemple.l"
 {
                               yylval.cl.st.value_data.ident.lexema = strdup(yytext);
                               yylval.cl.st.value_data.ident.lenght = yyleng;
@@ -1063,45 +1068,45 @@ YY_RULE_SETUP
                               return STRING;
                             } 
 	YY_BREAK
-case 37:
+case 38:
 YY_RULE_SETUP
-#line 132 "exemple.l"
+#line 134 "exemple.l"
 {
                               yylval.cl.st.value_data.real = atof(yytext);
                               return FLOAT;
                             }
 	YY_BREAK
-case 38:
+case 39:
 YY_RULE_SETUP
-#line 138 "exemple.l"
+#line 140 "exemple.l"
 {
                               yylval.cl.st.value_data.enter = atoi(yytext);
                               return INTEGER;
                             }
 	YY_BREAK
-case 39:
-/* rule 39 can match eol */
-YY_RULE_SETUP
-#line 144 "exemple.l"
-{}
-	YY_BREAK
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
 #line 146 "exemple.l"
-{ return ENDLINE; }
+{}
 	YY_BREAK
 case 41:
+/* rule 41 can match eol */
 YY_RULE_SETUP
 #line 148 "exemple.l"
-{}
+{ return ENDLINE; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 150 "exemple.l"
+{}
+	YY_BREAK
+case 43:
+YY_RULE_SETUP
+#line 152 "exemple.l"
 ECHO;
 	YY_BREAK
-#line 1105 "lex.yy.c"
+#line 1110 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(MATRIX):
 	yyterminate();
@@ -2080,6 +2085,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 150 "exemple.l"
+#line 152 "exemple.l"
 
 

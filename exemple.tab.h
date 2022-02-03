@@ -44,7 +44,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 28 "exemple.y"
+#line 27 "exemple.y"
 
   /* Les definicions que s'utilitzen al %union han d'estar aqui */
   #include "symtab.h"
@@ -86,18 +86,19 @@ extern int yydebug;
     DDP = 282,
     RETURN = 283,
     FUNC = 284,
-    GREATERTHAN = 285,
-    LESSTHAN = 286,
-    GREATEREQ = 287,
-    LESSEQ = 288,
-    EQ = 289,
-    DIF = 290,
-    FOR = 291,
-    IF = 292,
-    ELSE = 293,
-    ELSEIF = 294,
-    IN = 295,
-    WHILE = 296
+    DP = 285,
+    GREATERTHAN = 286,
+    LESSTHAN = 287,
+    GREATEREQ = 288,
+    LESSEQ = 289,
+    EQ = 290,
+    DIF = 291,
+    FOR = 292,
+    IF = 293,
+    ELSE = 294,
+    ELSEIF = 295,
+    IN = 296,
+    WHILE = 297
   };
 #endif
 
@@ -105,11 +106,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 36 "exemple.y"
+#line 35 "exemple.y"
 
   cond_list cl;
 
-#line 113 "exemple.tab.h"
+#line 114 "exemple.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

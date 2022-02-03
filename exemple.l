@@ -48,6 +48,8 @@ boolean (true|false)
 
 "::"                        { return DDP; }
 
+":"                         { return DP; }
+
 "return"                    { return RETURN; }
 
 "end"                       { return END; }

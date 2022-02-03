@@ -21,34 +21,36 @@
 010: $t1 := CALL sum 
 011: $t2 := $t1 MULI 5
 012: k := $t2
-013: GOTO  20
+013: GOTO  19
 014: IF m EQ 2 GOTO 16
 015: GOTO  18
 016: k := 5
-017: GOTO  20
+017: GOTO  19
 018: k := 9
-019: pepe := 4
-020: matrix[0] := 1 
-021: matrix[4] := 4 
-022: matrix[8] := 2 
-023: matrix[12] := 5 
-024: matrix[16] := 3 
-025: matrix[20] := 5 
-026: $t3 := m MULI 4
-027: $t4 := $t3 ADDI 1
-028: $t5 := matrix[$t4]
-029: PARAM $t5 
-030: PUTI, 1 
-031: vector[0] := 1 
-032: vector[4] := 4 
-033: vector[8] := 3 
-034: IF m GT 3 GOTO 38
-035: GOTO  36
-036: IF s EQ 6 GOTO 38
-037: GOTO  42
-038: PARAM vector 
-039: CALL readValue 
-040: x := 17.000000
-041: GOTO 34 
-042: HALT 
-043: END 
+019: matrix[0] := 1 
+020: matrix[4] := 4 
+021: matrix[8] := 2 
+022: matrix[12] := 5 
+023: matrix[16] := 3 
+024: matrix[20] := 5 
+025: $t3 := m MULI 4
+026: $t4 := $t3 ADDI 1
+027: $t5 := matrix[$t4]
+028: PARAM $t5 
+029: PUTI, 1 
+030: vector[0] := 1 
+031: vector[4] := 4 
+032: vector[8] := 3 
+033: IF m GT 3 GOTO 37
+034: GOTO  35
+035: IF s EQ 6 GOTO 37
+036: GOTO  41
+037: PARAM vector 
+038: CALL readValue 
+039: x := 17.000000
+040: GOTO 33 
+041: i := 1
+042: $t6 := i ADDI 2
+043: n := $t6
+044: HALT 
+045: END 
